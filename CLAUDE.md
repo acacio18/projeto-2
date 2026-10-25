@@ -18,7 +18,12 @@ SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos 
 
 ## Ambiente (Windows nativo, sem Docker/WSL)
 
-Verificado em 25/10/2026: Git 2.56; Python 3.12.10 (`py -3.12`); PostgreSQL 16.15 como serviço `postgresql-x64-16`, porta 5432; Tesseract 5.4 em `C:\Program Files\Tesseract-OCR\` com os idiomas `eng`, `osd` e `por`. A senha do superusuário `postgres` fica **somente** em `%USERPROFILE%\.suap_v2\postgres_superuser_password.txt`: nunca copiar para o repositório. O shell é Windows PowerShell 5.1.
+Verificado em 25/10/2026: Git 2.56; Python 3.12.10 (`py -3.12`); PostgreSQL 16.15 como serviço `postgresql-x64-16`, porta 5432; Tesseract 5.4 em `C:\Program Files\Tesseract-OCR\` com os idiomas `eng`, `osd` e `por`. O shell é Windows PowerShell 5.1.
+
+- **Banco da aplicação:** banco e usuário `suap_v2` em `localhost:5432` (o usuário tem CREATEDB para os testes).
+- **Senhas:** só em `%USERPROFILE%\.suap_v2\` (`suap_v2_db_password.txt` e `postgres_superuser_password.txt`); nunca copiar para o repositório.
+- **Repositório:** `git@github.com:acacio18/projeto-2.git` (público, branch `main`), acessado por deploy key com escrita (`~/.ssh/id_ed25519_suapv2`). Use o `git` normalmente: ele usa o próprio SSH; o OpenSSH do Windows (`System32`) não funciona com o GitHub.
+- **Commits:** autor "Acácio <lab.nisa.programar@gmail.com>", configurado no repositório. Mensagens com acento: usar `git commit -F arquivo.txt` (UTF-8), porque o PowerShell 5.1 pode corromper acentos passados como argumento.
 
 Comandos de build, teste e lint **ainda não existem**: serão criados na E0, com virtualenv `.venv`, pytest/pytest-django, ruff e scripts PowerShell em `scripts\`. Quando existirem, documentar aqui.
 
