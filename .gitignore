@@ -1,30 +1,48 @@
-/vendor/
-node_modules/
-npm-debug.log
-yarn-error.log
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
 
-# Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
-
-# Laravel 5 & Lumen specific
-public/storage
-public/hot
-
-# Laravel 5 & Lumen specific with changed public path
-public_html/storage
-public_html/hot
-
-storage/*.key
+# Ambiente virtual e segredos
+.venv/
+venv/
 .env
-Homestead.yaml
-Homestead.json
-/.vagrant
-.phpunit.result.cache
+.env.*
+!.env.example
 
-/public/build
-/storage/pail
-.env.backup
-.env.production
-.phpactor.json
-auth.json
+# Django
+media/
+staticfiles/
+*.sqlite3
+*.log
+
+# Testes e qualidade
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+test-results/
+playwright-report/
+
+# Tailwind CLI standalone (binário baixado localmente)
+bin/tailwindcss*
+
+# Backups locais
+backups/
+*.dump
+
+# Claude Code: configurações locais da máquina
+.claude/settings.local.json
+
+# Editores e sistema operacional
+.idea/
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
+desktop.ini
+.DS_Store
