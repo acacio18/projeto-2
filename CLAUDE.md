@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-**Ainda não existe código.** O projeto está na Etapa 0 (E0): só a tarefa 1, instalação dos programas, foi concluída. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 4 estão concluídas: programas instalados, repositório e banco, e esqueleto Django com `/healthz`. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -25,14 +25,27 @@ Verificado em 25/10/2026: Git 2.56; Python 3.12.10 (`py -3.12`); PostgreSQL 16.1
 - **Repositório:** `git@github.com:acacio18/projeto-2.git` (público, branch `main`), acessado por deploy key com escrita (`~/.ssh/id_ed25519_suapv2`). Use o `git` normalmente: ele usa o próprio SSH; o OpenSSH do Windows (`System32`) não funciona com o GitHub.
 - **Commits:** autor "Acácio <lab.nisa.programar@gmail.com>", configurado no repositório. Mensagens com acento: usar `git commit -F arquivo.txt` (UTF-8), porque o PowerShell 5.1 pode corromper acentos passados como argumento.
 
-Comandos de build, teste e lint **ainda não existem**: serão criados na E0, com virtualenv `.venv`, pytest/pytest-django, ruff e scripts PowerShell em `scripts\`. Quando existirem, documentar aqui.
+## Comandos (PowerShell, na raiz do projeto)
+
+```powershell
+.\.venv\Scripts\pip-compile requirements.in      # após editar dependências diretas
+.\.venv\Scripts\pip-sync requirements.txt        # sincroniza o .venv com as versões fixadas
+.\.venv\Scripts\python manage.py check           # configurações de dev (padrão do manage.py)
+$env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manage.py check --deploy
+.\.venv\Scripts\python manage.py runserver       # http://127.0.0.1:8000/healthz → 200 se banco e Tesseract/por OK
+```
+
+- **Configuração:** fica em `.env` (fora do Git; modelo em `.env.example`). `manage.py` usa `config.settings.dev`; `wsgi.py` e `asgi.py` usam `config.settings.prod`; os testes usarão `config.settings.test`.
+- **Terminais antigos:** se não acharem `python`, `py` ou `git` (abertos antes da instalação), use os caminhos do `.venv` ou recarregue o PATH.
+- **Sem `migrate` até a E1:** o modelo de usuário personalizado precisa existir antes da primeira migração.
+- **Ainda não existem:** testes, lint e os scripts em `scripts\` (tarefas 5 e 6 da E0).
 
 ## Arquitetura-alvo (ver `docs/planejamento/05-arquitetura.md`)
 
 Monolito Django 5.2 modular + DRF + PostgreSQL. Templates Django + HTMX + Chart.js, com Tailwind via CLI standalone (sem Node). Escolhas por rodar nativo no Windows: **Django-Q2** com broker ORM no lugar de Celery/Redis, **Waitress** no lugar de Gunicorn, **ReportLab** no lugar de WeasyPrint e **pypdfium2 + pytesseract** no lugar de OCRmyPDF/Poppler.
 
 Princípios que atravessam vários módulos:
-- `regras/` (Regimento) e `estatistica/` são **funções puras, sem Django**, com `Decimal`. Cada regra cita o artigo do Regimento e lê os limiares de `ParametroRegra`, que tem a flag `confirmada`.
+- **Estrutura:** apps Django em `apps/<nome>` (contas, academico, importacao, notas, analytics, paineis, relatorios, api, auditoria, ops). `dominio/regras` (Regimento) e `dominio/estatistica` são **funções puras, sem Django**, com `Decimal`, e não podem importar `django`. Cada regra cita o artigo do Regimento e lê os limiares de `ParametroRegra`, que tem a flag `confirmada`.
 - **Escopo de dados central:** toda consulta de domínio (views, API, exportações) passa por uma única política de escopo. Professor vê só os próprios diários; Coordenador, os diários do curso; Admin, tudo. Não existe perfil "Aluno": o "dashboard do aluno" é um painel sobre o aluno, visto por professor e coordenador.
 - **Importação versionada:** cada PDF gera uma nova versão (nada é sobrescrito); a versão vigente só muda após confirmação do professor; hash SHA-256 evita duplicatas. O pipeline roda em tarefas Django-Q2: texto via pdfplumber, OCR como fallback.
 - Toda saída analítica (risco, ranking, predição, recomendação) é **estimativa** com motivo explicado. O sistema nunca grava resultado acadêmico oficial, porque a decisão é do Conselho de Classe.

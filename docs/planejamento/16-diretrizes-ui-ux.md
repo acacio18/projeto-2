@@ -36,5 +36,6 @@
 6. **Movimento:** transições de 150–300 ms; respeitar `prefers-reduced-motion`.
 7. **Critério de aceitação novo:** o **Pre-Delivery Checklist** da skill (qualidade visual, interação, claro/escuro, layout e acessibilidade) passa a fazer parte do aceite das etapas E1, E3, E6 e E7, com evidência registrada em `docs/evidencias/`.
 
-## Decisão pendente
-- **Identidade visual:** usar as cores e o logotipo do IFPB (sistema institucional) ou a paleta recomendada pela skill? Proposta: rodar o design system da skill e ajustar a cor primária à identidade do IFPB, mantendo os contrastes exigidos pela skill. Decisão do usuário/coordenação.
+## Decisões do usuário (26/10/2026)
+- **Identidade visual: usar as cores do IFPB.** O design system gerado pela skill continua valendo para tipografia, espaçamento, componentes, gráficos e acessibilidade, mas a paleta parte das cores institucionais. Os valores exatos (verde e vermelho institucionais e variações) serão tirados do manual de identidade visual oficial do IFPB / Rede Federal no início da E1, e não estimados. Todas as combinações de texto precisam ter contraste mínimo de 4,5:1, como a skill exige.
+- **Descompactar a skill só quando for necessária**, ou seja, no início da E1, antes da primeira tela.

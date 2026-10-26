@@ -1,0 +1,32 @@
+# Dependências diretas de execução do SUAP V2 (ver docs/planejamento/05-arquitetura.md).
+# Versões exatas ficam em requirements.txt, gerado com:
+#   .venv\Scripts\pip-compile requirements.in
+# Instalar/sincronizar o ambiente com:
+#   .venv\Scripts\pip-sync requirements.txt
+
+# Web e API
+Django>=5.2,<5.3
+djangorestframework
+drf-spectacular
+django-environ
+waitress
+
+# Banco e fila (Django-Q2 com broker ORM no PostgreSQL)
+psycopg[binary]
+django-q2
+
+# Autenticação
+argon2-cffi
+django-axes
+
+# Leitura de PDF e OCR
+pdfplumber
+pypdfium2
+pytesseract
+Pillow
+
+# Estatística, gráficos e exportações
+numpy
+matplotlib
+reportlab
+openpyxl
