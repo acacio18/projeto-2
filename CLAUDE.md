@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 4 estão concluídas: programas instalados, repositório e banco, e esqueleto Django com `/healthz`. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 5 estão concluídas: programas instalados, repositório e banco, esqueleto Django com `/healthz`, e ferramentas de qualidade com os primeiros testes. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -28,17 +28,28 @@ Verificado em 25/10/2026: Git 2.56; Python 3.12.10 (`py -3.12`); PostgreSQL 16.1
 ## Comandos (PowerShell, na raiz do projeto)
 
 ```powershell
-.\.venv\Scripts\pip-compile requirements.in      # após editar dependências diretas
-.\.venv\Scripts\pip-sync requirements.txt        # sincroniza o .venv com as versões fixadas
+.\.venv\Scripts\pip-compile requirements.in      # após editar dependências de execução
+.\.venv\Scripts\pip-compile requirements-dev.in  # após editar dependências de desenvolvimento
+.\.venv\Scripts\pip-sync requirements.txt requirements-dev.txt   # sincroniza o .venv
+.\.venv\Scripts\python -m pytest                 # todos os testes (inclui e2e com Chromium)
+.\.venv\Scripts\python -m pytest -m "not e2e"    # rápido, sem navegador
+.\.venv\Scripts\python -m pytest tests/ops/test_healthz.py::test_rejeita_metodos_diferentes_de_get   # um teste
+.\.venv\Scripts\python -m pytest --cov           # com cobertura
+.\.venv\Scripts\ruff check . ; .\.venv\Scripts\ruff format .
+.\.venv\Scripts\bandit -c pyproject.toml -r apps config dominio manage.py
+.\.venv\Scripts\pip-audit -r requirements.txt -r requirements-dev.txt
+.\.venv\Scripts\pre-commit run --all-files       # o mesmo que roda em cada commit
 .\.venv\Scripts\python manage.py check           # configurações de dev (padrão do manage.py)
 $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manage.py check --deploy
 .\.venv\Scripts\python manage.py runserver       # http://127.0.0.1:8000/healthz → 200 se banco e Tesseract/por OK
 ```
 
-- **Configuração:** fica em `.env` (fora do Git; modelo em `.env.example`). `manage.py` usa `config.settings.dev`; `wsgi.py` e `asgi.py` usam `config.settings.prod`; os testes usarão `config.settings.test`.
+- **Configuração:** fica em `.env` (fora do Git; modelo em `.env.example`). `manage.py` usa `config.settings.dev`; `wsgi.py` e `asgi.py` usam `config.settings.prod`; o pytest usa `config.settings.test` (definido no `pyproject.toml`).
+- **Testes:** ficam em `tests/`, espelhando as apps (`tests/ops/…`). Os de navegador ficam em `tests/e2e/`, com o marcador `e2e`; o `conftest.py` dessa pasta liga `DJANGO_ALLOW_ASYNC_UNSAFE` por causa do Playwright síncrono. O banco de teste (`test_suap_v2`) é criado pelo usuário `suap_v2`, que tem CREATEDB.
+- **Pre-commit:** roda ruff e bandit em cada commit. Um `# nosec` exige justificativa no próprio código.
 - **Terminais antigos:** se não acharem `python`, `py` ou `git` (abertos antes da instalação), use os caminhos do `.venv` ou recarregue o PATH.
 - **Sem `migrate` até a E1:** o modelo de usuário personalizado precisa existir antes da primeira migração.
-- **Ainda não existem:** testes, lint e os scripts em `scripts\` (tarefas 5 e 6 da E0).
+- **Ainda não existem:** os scripts em `scripts\` (tarefa 6 da E0) e o CI (tarefa 8).
 
 ## Arquitetura-alvo (ver `docs/planejamento/05-arquitetura.md`)
 

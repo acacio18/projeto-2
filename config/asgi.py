@@ -1,4 +1,5 @@
 """Ponto de entrada ASGI."""
+
 import os
 
 from django.core.asgi import get_asgi_application

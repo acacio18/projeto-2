@@ -1,0 +1,37 @@
+[project]
+name = "suap-v2"
+version = "0.0.0"
+description = "Análise estatística de boletins SUAP para docentes do IFPB"
+requires-python = ">=3.12,<3.13"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["**/migrations/**"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "C4", "SIM", "DJ", "PT"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config", "dominio"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--strict-markers --strict-config -ra"
+markers = [
+    "e2e: testes de ponta a ponta no navegador (Playwright)",
+]
+
+[tool.coverage.run]
+source = ["apps", "config", "dominio"]
+omit = ["**/migrations/**", "config/asgi.py", "config/wsgi.py", "config/settings/dev.py", "config/settings/prod.py"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.bandit]
+exclude_dirs = [".venv", "tests"]

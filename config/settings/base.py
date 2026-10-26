@@ -4,6 +4,7 @@ Valores sensíveis ou que mudam por máquina vêm de variáveis de ambiente,
 lidas do arquivo .env na raiz do projeto (fora do repositório; modelo em
 .env.example).
 """
+
 from pathlib import Path
 
 import environ

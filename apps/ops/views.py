@@ -1,5 +1,6 @@
 """Verificação de saúde da aplicação."""
-import subprocess
+
+import subprocess  # nosec B404: usado só para consultar o Tesseract, com comando fixo
 
 from django.conf import settings
 from django.db import DatabaseError, connection
@@ -19,7 +20,8 @@ def _banco_responde():
 
 def _tesseract_tem_portugues():
     try:
-        resultado = subprocess.run(
+        # Executável vem da configuração do servidor; sem shell e sem entrada do usuário.
+        resultado = subprocess.run(  # nosec B603
             [settings.TESSERACT_CMD, "--list-langs"],
             capture_output=True,
             text=True,

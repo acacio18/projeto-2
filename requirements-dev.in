@@ -1,0 +1,26 @@
+# Ferramentas de desenvolvimento e qualidade (não vão para produção).
+# Versões exatas em requirements-dev.txt, gerado com:
+#   .venv\Scripts\pip-compile requirements-dev.in
+# Ambiente completo de desenvolvimento:
+#   .venv\Scripts\pip-sync requirements.txt requirements-dev.txt
+-c requirements.txt
+
+pip-tools
+
+# Lint e formatação
+ruff
+
+# Testes
+pytest
+pytest-django
+pytest-cov
+factory-boy
+hypothesis
+pytest-playwright
+
+# Segurança
+bandit
+pip-audit
+
+# Ganchos de commit
+pre-commit

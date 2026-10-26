@@ -1,4 +1,5 @@
 """Ponto de entrada WSGI (servido pelo Waitress em produção)."""
+
 import os
 
 from django.core.wsgi import get_wsgi_application
