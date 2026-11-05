@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 5 estão concluídas: programas instalados, repositório e banco, esqueleto Django com `/healthz`, e ferramentas de qualidade com os primeiros testes. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 6 estão concluídas: programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, e scripts PowerShell. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -27,6 +27,18 @@ Verificado em 25/10/2026: Git 2.56; Python 3.12.10 (`py -3.12`); PostgreSQL 16.1
 
 ## Comandos (PowerShell, na raiz do projeto)
 
+Scripts de uso diário. O Windows bloqueia `.ps1` por padrão, então chame-os com `-ExecutionPolicy Bypass`, que vale só para aquele comando:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\verificar-ambiente.ps1   # .venv, dependências, .env, PostgreSQL, Chromium, banco e Tesseract
+powershell -ExecutionPolicy Bypass -File scripts\dev.ps1                  # verifica o ambiente e sobe o servidor (e a fila, quando houver)
+powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # ruff, bandit, pytest --cov, pip-audit (-Rapido: sem e2e e sem pip-audit)
+```
+
+Os `.ps1` precisam ficar em **UTF-8 com BOM**: o PowerShell 5.1 lê arquivos sem BOM como ANSI e corrompe os acentos.
+
+Comandos avulsos:
+
 ```powershell
 .\.venv\Scripts\pip-compile requirements.in      # após editar dependências de execução
 .\.venv\Scripts\pip-compile requirements-dev.in  # após editar dependências de desenvolvimento
@@ -42,14 +54,17 @@ Verificado em 25/10/2026: Git 2.56; Python 3.12.10 (`py -3.12`); PostgreSQL 16.1
 .\.venv\Scripts\python manage.py check           # configurações de dev (padrão do manage.py)
 $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manage.py check --deploy
 .\.venv\Scripts\python manage.py runserver       # http://127.0.0.1:8000/healthz → 200 se banco e Tesseract/por OK
+.\.venv\Scripts\python manage.py verificar_saude # mesmas verificações do /healthz no terminal (código 1 se falhar)
 ```
+
+- **Saúde:** as verificações ficam em `apps/ops/saude.py`, e a view `/healthz`, o comando `verificar_saude` e os scripts usam esse módulo. Uma verificação nova entra em `saude.verificar()`.
 
 - **Configuração:** fica em `.env` (fora do Git; modelo em `.env.example`). `manage.py` usa `config.settings.dev`; `wsgi.py` e `asgi.py` usam `config.settings.prod`; o pytest usa `config.settings.test` (definido no `pyproject.toml`).
 - **Testes:** ficam em `tests/`, espelhando as apps (`tests/ops/…`). Os de navegador ficam em `tests/e2e/`, com o marcador `e2e`; o `conftest.py` dessa pasta liga `DJANGO_ALLOW_ASYNC_UNSAFE` por causa do Playwright síncrono. O banco de teste (`test_suap_v2`) é criado pelo usuário `suap_v2`, que tem CREATEDB.
 - **Pre-commit:** roda ruff e bandit em cada commit. Um `# nosec` exige justificativa no próprio código.
 - **Terminais antigos:** se não acharem `python`, `py` ou `git` (abertos antes da instalação), use os caminhos do `.venv` ou recarregue o PATH.
 - **Sem `migrate` até a E1:** o modelo de usuário personalizado precisa existir antes da primeira migração.
-- **Ainda não existem:** os scripts em `scripts\` (tarefa 6 da E0) e o CI (tarefa 8).
+- **Ainda não existem:** os fixtures de boletim (tarefa 7 da E0) e o CI (tarefa 8).
 
 ## Arquitetura-alvo (ver `docs/planejamento/05-arquitetura.md`)
 

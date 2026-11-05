@@ -6,7 +6,7 @@ import pytest
 from django.db import OperationalError
 from django.urls import reverse
 
-from apps.ops import views
+from apps.ops import saude
 
 SAUDAVEL = {"status": "ok", "verificacoes": {"banco": True, "tesseract_por": True}}
 
@@ -15,7 +15,7 @@ def _simular_tesseract(monkeypatch, stdout="", stderr=""):
     def executar(*args, **kwargs):
         return subprocess.CompletedProcess(args=args, returncode=0, stdout=stdout, stderr=stderr)
 
-    monkeypatch.setattr(views.subprocess, "run", executar)
+    monkeypatch.setattr(saude.subprocess, "run", executar)
 
 
 @pytest.fixture
@@ -75,7 +75,7 @@ def test_responde_503_quando_tesseract_excede_o_tempo(client, monkeypatch):
     def demorar(*args, **kwargs):
         raise subprocess.TimeoutExpired(cmd="tesseract", timeout=10)
 
-    monkeypatch.setattr(views.subprocess, "run", demorar)
+    monkeypatch.setattr(saude.subprocess, "run", demorar)
 
     resposta = client.get(reverse("healthz"))
 
@@ -88,7 +88,7 @@ def test_responde_503_quando_banco_falha(client, monkeypatch, tesseract_com_port
         def cursor(self):
             raise OperationalError("banco indisponível")
 
-    monkeypatch.setattr(views, "connection", ConexaoIndisponivel())
+    monkeypatch.setattr(saude, "connection", ConexaoIndisponivel())
 
     resposta = client.get(reverse("healthz"))
 

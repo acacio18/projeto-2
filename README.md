@@ -25,4 +25,15 @@ Python 3.12 · Django 5.2 · Django REST Framework · PostgreSQL 16 · Django-Q2
 ## Pré-requisitos do ambiente (Windows)
 
 - Python 3.12, PostgreSQL 16, Tesseract OCR 5 com o idioma `por` e Git.
-- Os passos de instalação e execução da aplicação serão documentados aqui ao final da Etapa 0.
+- Ambiente virtual e dependências: `py -3.12 -m venv .venv` e `.venv\Scripts\pip install pip-tools`, depois `.venv\Scripts\pip-sync requirements.txt requirements-dev.txt` e `.venv\Scripts\playwright install chromium`.
+- Configuração: copie `.env.example` para `.env` e preencha.
+
+## Como rodar (PowerShell, na raiz do projeto)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\verificar-ambiente.ps1   # confere se está tudo pronto
+powershell -ExecutionPolicy Bypass -File scripts\dev.ps1                  # sobe em http://127.0.0.1:8000 (saúde: /healthz)
+powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # lint, segurança, testes e auditoria de dependências
+```
+
+O guia completo de instalação será finalizado ao término da Etapa 0.

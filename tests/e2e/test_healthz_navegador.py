@@ -5,7 +5,7 @@ import subprocess
 import pytest
 from playwright.sync_api import Page, expect
 
-from apps.ops import views
+from apps.ops import saude
 
 pytestmark = [pytest.mark.e2e, pytest.mark.django_db(transaction=True)]
 
@@ -14,7 +14,7 @@ def test_healthz_abre_no_navegador(page: Page, live_server, monkeypatch):
     def tesseract_com_portugues(*args, **kwargs):
         return subprocess.CompletedProcess(args=args, returncode=0, stdout="eng\nosd\npor\n", stderr="")
 
-    monkeypatch.setattr(views.subprocess, "run", tesseract_com_portugues)
+    monkeypatch.setattr(saude.subprocess, "run", tesseract_com_portugues)
 
     resposta = page.goto(f"{live_server.url}/healthz")
 
