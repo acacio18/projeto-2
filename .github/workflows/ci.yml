@@ -1,0 +1,146 @@
+# Integração contínua do SUAP V2 (E0, tarefa 8).
+#
+# Reproduz num runner Windows o mesmo ambiente nativo do desenvolvimento (ver CLAUDE.md):
+# Python 3.12.10, PostgreSQL 16.15 (serviço postgresql-x64-16), Tesseract 5.4.0 com português
+# e o Chromium do Playwright. Depois roda os MESMOS scripts usados localmente:
+# scripts\verificar-ambiente.ps1 e scripts\test.ps1.
+#
+# Observações:
+# - As actions estão fixadas por SHA de commit (o comentário diz a versão).
+# - Os blocos "run" usam o Windows PowerShell 5.1, como na máquina de desenvolvimento.
+#   O texto deles fica sem acentos, porque o runner grava o script temporário sem BOM.
+# - Senhas e chave secreta são geradas a cada execução e mascaradas no log; não há segredos
+#   guardados no repositório nem nas configurações do GitHub.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pacote Chocolatey postgresql16 = PostgreSQL 16.15, a mesma versão do ambiente local.
+  POSTGRES_PACOTE_VERSAO: "16.15.5"
+  # Mesmo instalador do ambiente local (UB-Mannheim, via winget); hash conferido com o
+  # manifesto oficial do winget (UB-Mannheim.TesseractOCR 5.4.0.20240606).
+  TESSERACT_URL: https://github.com/UB-Mannheim/tesseract/releases/download/v5.4.0.20240606/tesseract-ocr-w64-setup-5.4.0.20240606.exe
+  TESSERACT_SHA256: C885FFF6998E0608BA4BB8AB51436E1C6775C2BAFC2559A19B423E18678B60C9
+  # Idioma português, de uma revisão fixa do tesseract-ocr/tessdata; idêntico ao arquivo local.
+  TESSDATA_POR_URL: https://github.com/tesseract-ocr/tessdata/raw/ced78752cc61322fb554c280d13360b35b8684e4/por.traineddata
+  TESSDATA_POR_SHA256: 016C6A371BB1E4C48FE521908CF3BA3D751FADE0AB846AD5D4086B563F5C528C
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+jobs:
+  qualidade:
+    name: Lint, segurança e testes (Windows)
+    runs-on: windows-2025
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12.10"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Ambiente virtual e dependências
+        run: |
+          python -m venv .venv
+          $pipTools = (Select-String -Path requirements-dev.txt -Pattern '^pip-tools==').Line
+          .\.venv\Scripts\python.exe -m pip install $pipTools
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\.venv\Scripts\pip-sync.exe requirements.txt requirements-dev.txt
+
+      - name: PostgreSQL 16 (banco e usuário suap_v2)
+        run: |
+          $senhaPostgres = [guid]::NewGuid().ToString('N')
+          $senhaApp = [guid]::NewGuid().ToString('N')
+          Write-Output "::add-mask::$senhaPostgres"
+          Write-Output "::add-mask::$senhaApp"
+          choco install postgresql16 --version $env:POSTGRES_PACOTE_VERSAO -y --no-progress --params "/Password:$senhaPostgres /Port:5432"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-Service postgresql-x64-16
+          $env:PGPASSWORD = $senhaPostgres
+          $psql = 'C:\Program Files\PostgreSQL\16\bin\psql.exe'
+          $sql = Join-Path $env:RUNNER_TEMP 'criar-suap-v2.sql'
+          @(
+            "CREATE ROLE suap_v2 LOGIN CREATEDB PASSWORD '$senhaApp';",
+            'CREATE DATABASE suap_v2 OWNER suap_v2;'
+          ) | Set-Content -Path $sql -Encoding ascii
+          & $psql -h localhost -p 5432 -U postgres -v ON_ERROR_STOP=1 -f $sql
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Remove-Item $sql
+          & $psql -h localhost -p 5432 -U postgres -t -c 'SELECT version()'
+          Add-Content -Path $env:GITHUB_ENV -Value "SUAP_DB_SENHA=$senhaApp" -Encoding ascii
+
+      - name: Tesseract 5.4.0 com português
+        run: |
+          $ProgressPreference = 'SilentlyContinue'
+          $instalador = Join-Path $env:RUNNER_TEMP 'tesseract-setup.exe'
+          Invoke-WebRequest -UseBasicParsing $env:TESSERACT_URL -OutFile $instalador
+          if ((Get-FileHash $instalador -Algorithm SHA256).Hash -ne $env:TESSERACT_SHA256) { throw 'SHA-256 do instalador do Tesseract diferente do esperado' }
+          Start-Process -FilePath $instalador -ArgumentList '/S' -Wait
+          $por = 'C:\Program Files\Tesseract-OCR\tessdata\por.traineddata'
+          Invoke-WebRequest -UseBasicParsing $env:TESSDATA_POR_URL -OutFile $por
+          if ((Get-FileHash $por -Algorithm SHA256).Hash -ne $env:TESSDATA_POR_SHA256) { throw 'SHA-256 do por.traineddata diferente do esperado' }
+          & 'C:\Program Files\Tesseract-OCR\tesseract.exe' --version
+          & 'C:\Program Files\Tesseract-OCR\tesseract.exe' --list-langs
+
+      - name: Arquivo .env de CI
+        run: |
+          $bytes = New-Object byte[] 48
+          [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+          $chave = [Convert]::ToBase64String($bytes)
+          Write-Output "::add-mask::$chave"
+          @(
+            "DJANGO_SECRET_KEY=$chave",
+            'DJANGO_DEBUG=True',
+            'DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1',
+            "DATABASE_URL=postgres://suap_v2:$($env:SUAP_DB_SENHA)@localhost:5432/suap_v2",
+            'TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe'
+          ) | Set-Content -Path .env -Encoding ascii
+
+      - name: Cache do Chromium (Playwright)
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/AppData/Local/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('requirements-dev.txt') }}
+
+      - name: Chromium do Playwright
+        run: .\.venv\Scripts\playwright.exe install chromium
+
+      - name: Verificar o ambiente (scripts\verificar-ambiente.ps1)
+        run: powershell -ExecutionPolicy Bypass -File scripts\verificar-ambiente.ps1
+
+      - name: Migrações pendentes
+        run: .\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
+
+      - name: Cache do pre-commit
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Ganchos do pre-commit em todos os arquivos
+        run: .\.venv\Scripts\pre-commit.exe run --all-files --show-diff-on-failure
+
+      - name: Lint, segurança, testes e auditoria (scripts\test.ps1)
+        run: powershell -ExecutionPolicy Bypass -File scripts\test.ps1

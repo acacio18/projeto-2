@@ -1,0 +1,9 @@
+# Arquivos binários: o Git nunca converte finais de linha nem tenta mesclar.
+# Os testes conferem o SHA-256 do boletim de exemplo, então o PDF precisa chegar intacto.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.traineddata binary
+*.xlsx binary
+*.zip binary
