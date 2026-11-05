@@ -27,8 +27,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Pacote Chocolatey postgresql16 = PostgreSQL 16.15, a mesma versão do ambiente local.
-  POSTGRES_PACOTE_VERSAO: "16.15.5"
+  # PostgreSQL 16.15 (a mesma versão do ambiente local), binários oficiais da EDB em zip.
+  # Mais rápido que o instalador (o pacote Chocolatey levou 9 min); a pasta extraída fica em cache.
+  # A EDB não publica hashes destes zips: o SHA-256 foi calculado no download de 04/11/2026.
+  POSTGRES_ZIP_URL: https://get.enterprisedb.com/postgresql/postgresql-16.15-2-windows-x64-binaries.zip
+  POSTGRES_ZIP_SHA256: 840B9D265F6AB6C0A971C1D8E9096DE564950D38DC2A5CCD98C8820179ECF115
+  POSTGRES_RAIZ: C:\PostgreSQL16
   # Mesmo instalador do ambiente local (UB-Mannheim, via winget); hash conferido com o
   # manifesto oficial do winget (UB-Mannheim.TesseractOCR 5.4.0.20240606).
   TESSERACT_URL: https://github.com/UB-Mannheim/tesseract/releases/download/v5.4.0.20240606/tesseract-ocr-w64-setup-5.4.0.20240606.exe
@@ -69,17 +73,53 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\.venv\Scripts\pip-sync.exe requirements.txt requirements-dev.txt
 
-      - name: PostgreSQL 16 (banco e usuário suap_v2)
+      - name: Cache dos binários do PostgreSQL 16
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.POSTGRES_RAIZ }}
+          key: postgresql-${{ runner.os }}-${{ env.POSTGRES_ZIP_SHA256 }}
+
+      # Mesmo resultado do instalador local: serviço postgresql-x64-16 na porta 5432, banco em
+      # UTF8 com locale Portuguese_Brazil.1252 e senhas scram-sha-256.
+      - name: PostgreSQL 16 (serviço, banco e usuário suap_v2)
         run: |
+          $ProgressPreference = 'SilentlyContinue'
+          $bin = Join-Path $env:POSTGRES_RAIZ 'pgsql\bin'
+          if (-not (Test-Path (Join-Path $bin 'postgres.exe'))) {
+            $zip = Join-Path $env:RUNNER_TEMP 'postgresql-binarios.zip'
+            Invoke-WebRequest -UseBasicParsing $env:POSTGRES_ZIP_URL -OutFile $zip
+            if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne $env:POSTGRES_ZIP_SHA256) { throw 'SHA-256 do zip do PostgreSQL diferente do esperado' }
+            New-Item -ItemType Directory -Force $env:POSTGRES_RAIZ | Out-Null
+            tar -xf $zip -C $env:POSTGRES_RAIZ pgsql/bin pgsql/lib pgsql/share
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            Remove-Item $zip
+          }
+          & (Join-Path $bin 'postgres.exe') --version
           $senhaPostgres = [guid]::NewGuid().ToString('N')
           $senhaApp = [guid]::NewGuid().ToString('N')
           Write-Output "::add-mask::$senhaPostgres"
           Write-Output "::add-mask::$senhaApp"
-          choco install postgresql16 --version $env:POSTGRES_PACOTE_VERSAO -y --no-progress --params "/Password:$senhaPostgres /Port:5432"
+          $dados = 'C:\PostgreSQL16-dados'
+          $arquivoSenha = Join-Path $env:RUNNER_TEMP 'senha-postgres.txt'
+          Set-Content -Path $arquivoSenha -Value $senhaPostgres -Encoding ascii -NoNewline
+          & (Join-Path $bin 'initdb.exe') -D $dados -U postgres "--pwfile=$arquivoSenha" -A scram-sha-256 -E UTF8 --locale=Portuguese_Brazil.1252
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Remove-Item $arquivoSenha
+          # O servico roda como NetworkService (padrao do pg_ctl register), que precisa escrever nos dados.
+          icacls $dados /grant '*S-1-5-20:(OI)(CI)F' /T /Q
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & (Join-Path $bin 'pg_ctl.exe') register -N postgresql-x64-16 -D $dados -S demand
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Start-Service postgresql-x64-16
           Get-Service postgresql-x64-16
+          for ($i = 0; $i -lt 30; $i++) {
+            & (Join-Path $bin 'pg_isready.exe') -h localhost -p 5432
+            if ($LASTEXITCODE -eq 0) { break }
+            Start-Sleep -Seconds 1
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'PostgreSQL nao ficou pronto em 30 s' }
           $env:PGPASSWORD = $senhaPostgres
-          $psql = 'C:\Program Files\PostgreSQL\16\bin\psql.exe'
+          $psql = Join-Path $bin 'psql.exe'
           $sql = Join-Path $env:RUNNER_TEMP 'criar-suap-v2.sql'
           @(
             "CREATE ROLE suap_v2 LOGIN CREATEDB PASSWORD '$senhaApp';",
