@@ -183,4 +183,24 @@ jobs:
         run: .\.venv\Scripts\pre-commit.exe run --all-files --show-diff-on-failure
 
       - name: Lint, segurança, testes e auditoria (scripts\test.ps1)
-        run: powershell -ExecutionPolicy Bypass -File scripts\test.ps1
+        run: |
+          powershell -ExecutionPolicy Bypass -File scripts\test.ps1 | Tee-Object -FilePath (Join-Path $env:RUNNER_TEMP 'test.log')
+
+      # Versões e placar dos testes como anotação da execução (visível sem login, ao contrário do log)
+      # e no resumo da página da execução.
+      - name: Resumo
+        if: always()
+        run: |
+          $linhas = @()
+          $linhas += (& .\.venv\Scripts\python.exe --version)
+          $linhas += (& (Join-Path $env:POSTGRES_RAIZ 'pgsql\bin\postgres.exe') --version)
+          $linhas += ((& 'C:\Program Files\Tesseract-OCR\tesseract.exe' --version) | Select-Object -First 1)
+          $log = Join-Path $env:RUNNER_TEMP 'test.log'
+          if (Test-Path $log) {
+            $linhas += (Select-String -Path $log -Pattern '\d+ (passed|failed)|^TOTAL' | ForEach-Object { $_.Line.Trim(' =') })
+          } else {
+            $linhas += 'test.ps1 nao chegou a rodar'
+          }
+          # Nas anotacoes, '%' e quebra de linha precisam ser codificados (%25 e %0A).
+          Write-Output ("::notice title=Resumo do CI::" + (($linhas | ForEach-Object { $_ -replace '%', '%25' }) -join '%0A'))
+          [IO.File]::AppendAllText($env:GITHUB_STEP_SUMMARY, "### Resumo do CI`n`n" + (($linhas | ForEach-Object { "- $_" }) -join "`n") + "`n")
