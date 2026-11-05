@@ -1,0 +1,635 @@
+{
+  "esquema": 1,
+  "descricao": "Gabarito do boletim de exemplo: valores que o leitor de boletins (E3) deve extrair. Transcrição manual da imagem das páginas, conferida pelos testes com a camada de texto do PDF. null = célula '-' no boletim (ausente, não zero).",
+  "arquivo": "docs/referencias/boletins/exemplo_boletins.pdf",
+  "sha256": "849aaec3441c0400df12a6d77fd307ad80b3fe4668fede4d00eedfd63426d449",
+  "paginas": 2,
+  "observacoes": [
+    "O título sai sem espaços na camada de texto: 'BOLETIMDENOTASDODIÁRIO'.",
+    "O SUAP imprime literalmente 'Telefone: None' quando o campus não tem telefone.",
+    "A tabela continua na página 2 sem repetir o cabeçalho das colunas.",
+    "Nomes podem ter minúsculas no meio (aluno 19) e acentos (alunos 3, 11, 14, 22, 25, 26, 28, 31).",
+    "Alunos cancelados têm '-' em % Freq., MD e MFD, mesmo com notas parciais (aluno 30)."
+  ],
+  "instituicao": {
+    "nome": "INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DA PARAÍBA",
+    "campus": "Campus Itaporanga",
+    "codigo_inep": "25128620",
+    "endereco": "Pb-386, S/N, Km 2, CEP 58780-000, Itaporanga (PB)",
+    "cnpj": "10.783.898/0016-51",
+    "telefone": null
+  },
+  "curso": {
+    "texto": "661 - Técnico em Informática Integrado ao Ensino Médio - Itaporanga (CAMPUS ITAPORANGA)",
+    "codigo": "661",
+    "nome": "Técnico em Informática Integrado ao Ensino Médio - Itaporanga (CAMPUS ITAPORANGA)"
+  },
+  "diario": {
+    "texto": "70764 - TIN.0054 - Análise e Projeto de Sistema - Médio [67 h/80 Aulas]",
+    "codigo": "70764",
+    "disciplina_codigo": "TIN.0054",
+    "disciplina_nome": "Análise e Projeto de Sistema",
+    "nivel": "Médio",
+    "carga_horaria_horas": 67,
+    "aulas_previstas": 80
+  },
+  "periodo_letivo": {
+    "texto": "2023/1 (1º, 2º, 3º e 4º Bim.)",
+    "ano": 2023,
+    "periodo": 1,
+    "etapas": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "aulas_ministradas": {
+    "texto": "80 de 80 Aulas",
+    "ministradas": 80,
+    "previstas": 80
+  },
+  "emissao": {
+    "local": "Itaporanga (PB)",
+    "data": "2025-04-03"
+  },
+  "professor_principal": "Paulo Henrique Muniz Ferreira",
+  "alunos": [
+    {
+      "ordem": 1,
+      "pagina": 1,
+      "matricula": "201927621032",
+      "nome": "Aline Santana Ramos de Jesus",
+      "total_faltas": 4,
+      "frequencia_percentual": 95,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 50, "faltas": 4},
+        {"etapa": 2, "nota": 85, "faltas": 0},
+        {"etapa": 3, "nota": 75, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 75,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 75
+    },
+    {
+      "ordem": 2,
+      "pagina": 1,
+      "matricula": "202127621024",
+      "nome": "Ana Paula Lima Santos",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 71, "faltas": 0},
+        {"etapa": 2, "nota": 75, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 2},
+        {"etapa": 4, "nota": 100, "faltas": 0}
+      ],
+      "media_disciplina": 83,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 83
+    },
+    {
+      "ordem": 3,
+      "pagina": 1,
+      "matricula": "202027621011",
+      "nome": "André Luiz Moreira da Cunha",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 83, "faltas": 2},
+        {"etapa": 2, "nota": 85, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 50, "faltas": 0}
+      ],
+      "media_disciplina": 76,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 76
+    },
+    {
+      "ordem": 4,
+      "pagina": 1,
+      "matricula": "202127621040",
+      "nome": "Beatriz Helena Ferreira dos Santos",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 95, "faltas": 0},
+        {"etapa": 2, "nota": 75, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 80, "faltas": 0}
+      ],
+      "media_disciplina": 82,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 82
+    },
+    {
+      "ordem": 5,
+      "pagina": 1,
+      "matricula": "202127621021",
+      "nome": "Bianca Cardoso Figueiredo",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 88, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 90, "faltas": 0},
+        {"etapa": 4, "nota": 80, "faltas": 0}
+      ],
+      "media_disciplina": 88,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 88
+    },
+    {
+      "ordem": 6,
+      "pagina": 1,
+      "matricula": "202127621042",
+      "nome": "Bruno da Costa Menezes",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 88, "faltas": 0},
+        {"etapa": 2, "nota": 85, "faltas": 2},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 87,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 87
+    },
+    {
+      "ordem": 7,
+      "pagina": 1,
+      "matricula": "202127621023",
+      "nome": "Camila Rocha Ferreira",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 90, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 90, "faltas": 0},
+        {"etapa": 4, "nota": 80, "faltas": 0}
+      ],
+      "media_disciplina": 89,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 89
+    },
+    {
+      "ordem": 8,
+      "pagina": 1,
+      "matricula": "202027621008",
+      "nome": "Daniel Queiroz Dantas",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 35, "faltas": 0},
+        {"etapa": 2, "nota": 30, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 2},
+        {"etapa": 4, "nota": 50, "faltas": 0}
+      ],
+      "media_disciplina": 50,
+      "avaliacao_final": {"nota": 95, "faltas": 0},
+      "media_final": 68
+    },
+    {
+      "ordem": 9,
+      "pagina": 1,
+      "matricula": "202127621004",
+      "nome": "Diego Fonseca Lima",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 50, "faltas": 2},
+        {"etapa": 2, "nota": 20, "faltas": 0},
+        {"etapa": 3, "nota": 75, "faltas": 0},
+        {"etapa": 4, "nota": 100, "faltas": 0}
+      ],
+      "media_disciplina": 61,
+      "avaliacao_final": {"nota": 35, "faltas": 0},
+      "media_final": 51
+    },
+    {
+      "ordem": 10,
+      "pagina": 1,
+      "matricula": "202127621030",
+      "nome": "Eduardo Silveira de Souza",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 86, "faltas": 2},
+        {"etapa": 2, "nota": 75, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 50, "faltas": 0}
+      ],
+      "media_disciplina": 74,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 74
+    },
+    {
+      "ordem": 11,
+      "pagina": 1,
+      "matricula": "202127621006",
+      "nome": "Érica Machado de Assis",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 80, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 88,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 88
+    },
+    {
+      "ordem": 12,
+      "pagina": 1,
+      "matricula": "202027621015",
+      "nome": "Felipe Duarte Barbosa",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 87, "faltas": 0},
+        {"etapa": 2, "nota": 80, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 100, "faltas": 0}
+      ],
+      "media_disciplina": 87,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 87
+    },
+    {
+      "ordem": 13,
+      "pagina": 1,
+      "matricula": "202127621019",
+      "nome": "Isabela Cristina Nunes de Almeida",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 90, "faltas": 0},
+        {"etapa": 2, "nota": 90, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 100, "faltas": 0}
+      ],
+      "media_disciplina": 90,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 90
+    },
+    {
+      "ordem": 14,
+      "pagina": 1,
+      "matricula": "202027621020",
+      "nome": "João Victor Carvalho Lima",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 88, "faltas": 2},
+        {"etapa": 2, "nota": 75, "faltas": 0},
+        {"etapa": 3, "nota": 78, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 83,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 83
+    },
+    {
+      "ordem": 15,
+      "pagina": 1,
+      "matricula": "202127621007",
+      "nome": "Juliana Mendes Coelho",
+      "total_faltas": 4,
+      "frequencia_percentual": 95,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 40, "faltas": 4},
+        {"etapa": 2, "nota": 0, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 100, "faltas": 0}
+      ],
+      "media_disciplina": 55,
+      "avaliacao_final": {"nota": 95, "faltas": 0},
+      "media_final": 71
+    },
+    {
+      "ordem": 16,
+      "pagina": 1,
+      "matricula": "202127621034",
+      "nome": "Larissa Barbosa Coelho",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 88, "faltas": 2},
+        {"etapa": 2, "nota": 85, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 86,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 86
+    },
+    {
+      "ordem": 17,
+      "pagina": 1,
+      "matricula": "202127621044",
+      "nome": "Lee Yongbok Felix",
+      "total_faltas": 4,
+      "frequencia_percentual": 95,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 82, "faltas": 0},
+        {"etapa": 2, "nota": 80, "faltas": 2},
+        {"etapa": 3, "nota": 85, "faltas": 2},
+        {"etapa": 4, "nota": 100, "faltas": 0}
+      ],
+      "media_disciplina": 87,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 87
+    },
+    {
+      "ordem": 18,
+      "pagina": 1,
+      "matricula": "202127621018",
+      "nome": "Leonardo Cunha Sampaio",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 93, "faltas": 0},
+        {"etapa": 2, "nota": 85, "faltas": 0},
+        {"etapa": 3, "nota": 90, "faltas": 2},
+        {"etapa": 4, "nota": 50, "faltas": 0}
+      ],
+      "media_disciplina": 80,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 80
+    },
+    {
+      "ordem": 19,
+      "pagina": 1,
+      "matricula": "202127621041",
+      "nome": "Lohane vekanandre sthephany",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 70, "faltas": 2},
+        {"etapa": 2, "nota": 75, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 80,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 80
+    },
+    {
+      "ordem": 20,
+      "pagina": 1,
+      "matricula": "202127621015",
+      "nome": "Magnus Carlsen",
+      "total_faltas": 4,
+      "frequencia_percentual": 95,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 80, "faltas": 4},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 95, "faltas": 0},
+        {"etapa": 4, "nota": 80, "faltas": 0}
+      ],
+      "media_disciplina": 88,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 88
+    },
+    {
+      "ordem": 21,
+      "pagina": 1,
+      "matricula": "202127621010",
+      "nome": "Mariana Lopes Souza",
+      "total_faltas": 4,
+      "frequencia_percentual": 95,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 89, "faltas": 2},
+        {"etapa": 2, "nota": 85, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 2},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 86,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 86
+    },
+    {
+      "ordem": 22,
+      "pagina": 1,
+      "matricula": "202127621001",
+      "nome": "Neymar Júnior",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 70, "faltas": 0},
+        {"etapa": 2, "nota": 90, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 84,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 84
+    },
+    {
+      "ordem": 23,
+      "pagina": 1,
+      "matricula": "202027621017",
+      "nome": "Nicole Farias Moura dos Anjos",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 84, "faltas": 0},
+        {"etapa": 2, "nota": 90, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 87,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 87
+    },
+    {
+      "ordem": 24,
+      "pagina": 1,
+      "matricula": "202027621030",
+      "nome": "Pedro Augusto Martins da Silva",
+      "total_faltas": 0,
+      "frequencia_percentual": null,
+      "situacao": "Cancelado",
+      "etapas": [
+        {"etapa": 1, "nota": null, "faltas": 0},
+        {"etapa": 2, "nota": null, "faltas": 0},
+        {"etapa": 3, "nota": null, "faltas": 0},
+        {"etapa": 4, "nota": null, "faltas": 0}
+      ],
+      "media_disciplina": null,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": null
+    },
+    {
+      "ordem": 25,
+      "pagina": 2,
+      "matricula": "202127621005",
+      "nome": "Priscila Antunes de Araújo Machado",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 90, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 89,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 89
+    },
+    {
+      "ordem": 26,
+      "pagina": 2,
+      "matricula": "202127621020",
+      "nome": "Rafaela Monteiro Estevão",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 93, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 80, "faltas": 0}
+      ],
+      "media_disciplina": 88,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 88
+    },
+    {
+      "ordem": 27,
+      "pagina": 2,
+      "matricula": "202127621012",
+      "nome": "Rafael Oliveira Leite",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 94, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 80, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 90,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 90
+    },
+    {
+      "ordem": 28,
+      "pagina": 2,
+      "matricula": "202127621022",
+      "nome": "Tainá Brito Souza",
+      "total_faltas": 0,
+      "frequencia_percentual": 100,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 91, "faltas": 0},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 80, "faltas": 0}
+      ],
+      "media_disciplina": 88,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 88
+    },
+    {
+      "ordem": 29,
+      "pagina": 2,
+      "matricula": "202127621013",
+      "nome": "Thiago Campos Souza",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 80, "faltas": 2},
+        {"etapa": 2, "nota": 80, "faltas": 0},
+        {"etapa": 3, "nota": 90, "faltas": 0},
+        {"etapa": 4, "nota": 50, "faltas": 0}
+      ],
+      "media_disciplina": 75,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 75
+    },
+    {
+      "ordem": 30,
+      "pagina": 2,
+      "matricula": "202027621034",
+      "nome": "Vanessa Tavares de Lima Rodrigues",
+      "total_faltas": 2,
+      "frequencia_percentual": null,
+      "situacao": "Cancelado",
+      "etapas": [
+        {"etapa": 1, "nota": 25, "faltas": 0},
+        {"etapa": 2, "nota": 75, "faltas": 0},
+        {"etapa": 3, "nota": 45, "faltas": 2},
+        {"etapa": 4, "nota": null, "faltas": 0}
+      ],
+      "media_disciplina": null,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": null
+    },
+    {
+      "ordem": 31,
+      "pagina": 2,
+      "matricula": "202127621003",
+      "nome": "Vinícius Rezende Candido",
+      "total_faltas": 0,
+      "frequencia_percentual": null,
+      "situacao": "Cancelado",
+      "etapas": [
+        {"etapa": 1, "nota": null, "faltas": 0},
+        {"etapa": 2, "nota": null, "faltas": 0},
+        {"etapa": 3, "nota": null, "faltas": 0},
+        {"etapa": 4, "nota": null, "faltas": 0}
+      ],
+      "media_disciplina": null,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": null
+    },
+    {
+      "ordem": 32,
+      "pagina": 2,
+      "matricula": "201927621043",
+      "nome": "Zuleika Bandeira Rocha",
+      "total_faltas": 2,
+      "frequencia_percentual": 98,
+      "situacao": "Aprovado",
+      "etapas": [
+        {"etapa": 1, "nota": 65, "faltas": 2},
+        {"etapa": 2, "nota": 95, "faltas": 0},
+        {"etapa": 3, "nota": 85, "faltas": 0},
+        {"etapa": 4, "nota": 90, "faltas": 0}
+      ],
+      "media_disciplina": 84,
+      "avaliacao_final": {"nota": null, "faltas": 0},
+      "media_final": 84
+    }
+  ]
+}

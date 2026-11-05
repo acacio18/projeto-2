@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 6 estão concluídas: programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, e scripts PowerShell. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 7 estão concluídas: programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell e fixtures de boletim. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -64,7 +64,8 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
 - **Pre-commit:** roda ruff e bandit em cada commit. Um `# nosec` exige justificativa no próprio código.
 - **Terminais antigos:** se não acharem `python`, `py` ou `git` (abertos antes da instalação), use os caminhos do `.venv` ou recarregue o PATH.
 - **Sem `migrate` até a E1:** o modelo de usuário personalizado precisa existir antes da primeira migração.
-- **Ainda não existem:** os fixtures de boletim (tarefa 7 da E0) e o CI (tarefa 8).
+- **Boletins de teste:** o gabarito JSON do boletim de exemplo fica em `tests/fixtures/boletins/` (detalhes no `README.md` dessa pasta). As fixtures `boletim_exemplo`, `gabarito_exemplo` e `boletim_digitalizado("300dpi" | "150dpi" | "300dpi_inclinado" | "300dpi_girado90")` estão em `tests/conftest.py`. As versões digitalizadas (só imagem, para OCR) são geradas na hora por `tests/apoio/digitalizacao.py` e não são versionadas. O código de apoio aos testes fica em `tests/apoio/`.
+- **Ainda não existe:** o CI (tarefa 8 da E0).
 
 ## Arquitetura-alvo (ver `docs/planejamento/05-arquitetura.md`)
 
@@ -77,7 +78,7 @@ Princípios que atravessam vários módulos:
 - Toda saída analítica (risco, ranking, predição, recomendação) é **estimativa** com motivo explicado. O sistema nunca grava resultado acadêmico oficial, porque a decisão é do Conselho de Classe.
 - Auditoria só de inserção (`EventoAuditoria`) desde a E1.
 
-## Formato do boletim SUAP (fixture de referência: `C:\Users\Pichau\Downloads\exemplo_boletins.pdf`)
+## Formato do boletim SUAP (fixture de referência: `docs/referencias/boletins/exemplo_boletins.pdf`)
 
 PDF com camada de texto. Cabeçalho por rótulos: `Curso:`, `Diário:` (`70764 - TIN.0054 - Nome - Médio [67 h/80 Aulas]`), `Ano/Período Letivo:`, `Aulas Ministradas:`. Colunas: `# | Matrícula (12 dígitos) | Nome | T. Faltas | % Freq. | Situação | E1..E4 (N, F) | MD | NAF (N, F) | MFD/Conceito`. A tabela continua na página 2 sem repetir o cabeçalho. `-` significa ausente, não zero. Alunos `Cancelado` ficam fora das estatísticas. Os 4 bimestres vêm no mesmo PDF; o bimestre informado no upload é o "corte". **Não há** nota de recuperação bimestral separada nem notas por avaliação. Análise completa em `docs/planejamento/15-analise-boletim-exemplo.md`.
 
