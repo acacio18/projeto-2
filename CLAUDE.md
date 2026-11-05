@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-O projeto está na **Etapa 0 (E0)**. As tarefas 1 a 7 estão concluídas: programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell e fixtures de boletim. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A próxima é a **E1** (login, perfis, permissões, cadastro de professores e design system), que depende de autorização. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -65,7 +65,13 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
 - **Terminais antigos:** se não acharem `python`, `py` ou `git` (abertos antes da instalação), use os caminhos do `.venv` ou recarregue o PATH.
 - **Sem `migrate` até a E1:** o modelo de usuário personalizado precisa existir antes da primeira migração.
 - **Boletins de teste:** o gabarito JSON do boletim de exemplo fica em `tests/fixtures/boletins/` (detalhes no `README.md` dessa pasta). As fixtures `boletim_exemplo`, `gabarito_exemplo` e `boletim_digitalizado("300dpi" | "150dpi" | "300dpi_inclinado" | "300dpi_girado90")` estão em `tests/conftest.py`. As versões digitalizadas (só imagem, para OCR) são geradas na hora por `tests/apoio/digitalizacao.py` e não são versionadas. O código de apoio aos testes fica em `tests/apoio/`.
-- **Ainda não existe:** o CI (tarefa 8 da E0).
+- **CI:** `.github/workflows/ci.yml` roda em cada push na `main` e em pull requests. Ele usa o runner `windows-2025`, instala as mesmas versões do ambiente local e executa `verificar-ambiente.ps1`, `makemigrations --check`, o pre-commit e o `test.ps1`. As versões instaladas:
+  - Python 3.12.10;
+  - PostgreSQL 16.15, pelo zip oficial da EDB com cache, porque o pacote Chocolatey levava 9 min;
+  - Tesseract 5.4.0 da UB-Mannheim com `por`;
+  - Chromium.
+
+  Downloads externos são conferidos por SHA-256, e as actions ficam fixadas por SHA de commit. Ao mudar uma versão no ambiente local, mude também no `env:` do workflow. Os blocos `run:` usam o Windows PowerShell 5.1 e não podem ter acentos, porque o runner grava o script sem BOM. O log só abre com login; o passo "Resumo" publica versões e placar dos testes numa anotação, que a API pública (`/check-runs/<job>/annotations`) lê sem autenticação.
 
 ## Arquitetura-alvo (ver `docs/planejamento/05-arquitetura.md`)
 

@@ -1,6 +1,6 @@
 """Verificações de saúde do ambiente, usadas pelo /healthz e pelo comando verificar_saude."""
 
-import subprocess  # nosec B404: usado só para consultar o Tesseract, com comando fixo
+import subprocess  # nosec B404 # usado só para consultar o Tesseract, com comando fixo
 
 from django.conf import settings
 from django.db import DatabaseError, connection

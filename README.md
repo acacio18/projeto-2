@@ -1,5 +1,7 @@
 # SUAP V2
 
+[![CI](https://github.com/acacio18/projeto-2/actions/workflows/ci.yml/badge.svg)](https://github.com/acacio18/projeto-2/actions/workflows/ci.yml)
+
 Sistema web de apoio a professores e coordenadores do **IFPB** (cursos técnicos integrados ao ensino médio). Ele lê o PDF "Boletim de Notas do Diário" exportado pelo SUAP e transforma as notas em estatísticas, painéis, alertas de alunos em risco, comparações entre turmas e bimestres, projeções e relatórios. Tudo segue o Regimento Didático dos Cursos Técnicos Integrados do IFPB (2024).
 
 É uma reimplementação completa, escrita do zero, da proposta do TCC *"Automação do tratamento estatístico das notas dos alunos do IFPB pelo SUAP para docentes"* (IFPB Campus Itaporanga, 2025).
@@ -8,7 +10,7 @@ Sistema web de apoio a professores e coordenadores do **IFPB** (cursos técnicos
 
 ## Situação
 
-Em desenvolvimento: **Etapa 0, fundação técnica**. Ainda não há código da aplicação.
+Em desenvolvimento. A **Etapa 0 (fundação técnica) está concluída**: ambiente, esqueleto Django, testes, scripts, boletins de teste e integração contínua. As funcionalidades começam na Etapa 1.
 
 ## Documentação
 
@@ -36,4 +38,6 @@ powershell -ExecutionPolicy Bypass -File scripts\dev.ps1                  # sobe
 powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # lint, segurança, testes e auditoria de dependências
 ```
 
-O guia completo de instalação será finalizado ao término da Etapa 0.
+## Integração contínua
+
+A cada envio para a `main` e em cada pull request, o GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) monta numa máquina Windows o mesmo ambiente acima, com as mesmas versões. Depois roda `verificar-ambiente.ps1`, a checagem de migrações pendentes, o pre-commit e o `test.ps1`. O selo no topo desta página mostra o resultado da última execução.
