@@ -7,3 +7,5 @@
 *.traineddata binary
 *.xlsx binary
 *.zip binary
+*.woff2 binary
+*.woff binary
