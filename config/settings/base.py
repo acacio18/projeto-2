@@ -5,6 +5,7 @@ lidas do arquivo .env na raiz do projeto (fora do repositório; modelo em
 .env.example).
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     "apps.api",
     "apps.auditoria",
     "apps.ops",
+    "axes",
 ]
 
 MIDDLEWARE = [
@@ -45,6 +47,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Último, como pede o django-axes: transforma o bloqueio por tentativas em resposta 429.
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -78,6 +82,65 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Contas e autenticação (E1: IDs 1, 2 e 15) -------------------------------------------------
+AUTH_USER_MODEL = "contas.Usuario"
+
+# Domínios de e-mail aceitos no cadastro. Pendente de confirmação institucional (o plano cita
+# @ifpb.edu.br e @academico.ifpb.edu.br; o segundo é dos estudantes, que não têm perfil).
+CONTAS_DOMINIOS_EMAIL = env.list("CONTAS_DOMINIOS_EMAIL", default=["ifpb.edu.br"])
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",  # recusa o login de quem está bloqueado
+    "django.contrib.auth.backends.ModelBackend",  # recusa usuários desativados
+]
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+]
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 10}},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+LOGIN_URL = "contas:entrar"
+LOGIN_REDIRECT_URL = "painel"
+LOGOUT_REDIRECT_URL = "contas:entrar"
+
+# Sessão expira após N minutos sem uso (o prazo é renovado a cada requisição) e ao fechar o navegador.
+SESSION_COOKIE_AGE = env.int("CONTAS_SESSAO_INATIVIDADE_MINUTOS", default=30) * 60
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = "Lax"
+
+# Convite e redefinição de senha: validade do link enviado por e-mail.
+PASSWORD_RESET_TIMEOUT = env.int("CONTAS_LINK_SENHA_VALIDADE_HORAS", default=72) * 3600
+
+# Bloqueio por tentativas (django-axes): N falhas seguidas bloqueiam a CONTA (o e-mail digitado,
+# em minúsculas), venha de qualquer IP, até o fim do prazo ou até um administrador desbloquear.
+AXES_FAILURE_LIMIT = env.int("CONTAS_LOGIN_FALHAS_PARA_BLOQUEIO", default=5)
+AXES_COOLOFF_TIME = timedelta(minutes=env.int("CONTAS_LOGIN_BLOQUEIO_MINUTOS", default=30))
+AXES_LOCKOUT_PARAMETERS = ["username"]
+AXES_RESET_ON_SUCCESS = True
+AXES_USERNAME_FORM_FIELD = "username"  # nome do campo no formulário de login do Django
+AXES_USERNAME_CALLABLE = "apps.contas.autenticacao.email_da_tentativa"
+AXES_CLIENT_IP_CALLABLE = "apps.contas.rede.ip_do_cliente"
+# O axes recomenda bloquear também por IP (W006). Não fazemos isso: na rede de um campus todos saem
+# pelo mesmo IP público, e 5 erros de pessoas diferentes trancariam o campus inteiro. O risco de
+# testar uma senha comum em várias contas fica atenuado pelos validadores de senha; uma limitação por
+# IP com limite próprio está prevista na revisão de segurança da E9.
+SILENCED_SYSTEM_CHECKS = ["axes.W006"]
+
+# E-mail (convites e redefinição de senha). Em desenvolvimento, as mensagens saem no terminal;
+# em produção (E10), SMTP institucional configurado pelo .env.
+EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="SUAP V2 <nao-responda@localhost>")
 
 # Executável do Tesseract OCR (precisa do idioma "por" instalado).
 TESSERACT_CMD = env("TESSERACT_CMD", default=r"C:\Program Files\Tesseract-OCR\tesseract.exe")

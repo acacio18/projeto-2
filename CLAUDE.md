@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A próxima é a **E1** (login, perfis, permissões, cadastro de professores e design system), que depende de autorização. Ainda não há funcionalidades nem migrações. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1** (login, perfis, permissões, cadastro de professores e design system) está **em andamento**. A parte 1 está pronta: design system, modelo de usuário, auditoria, bloqueio de login, escopo e serviços, com testes. A parte 2 são as telas, que aguardam a revisão do design system pelo usuário. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
 - **Pedir autorização explícita antes de iniciar cada próximo passo** (cada etapa ou tarefa do plano, e sempre antes de escrever código do programa). Seguir a ordem das etapas E0→E10 do plano.
 - **Código novo, do zero.** Os repositórios `phmferreira/projectMaths` e `phmferreira/leitordeboletim` e o TCC são do protótipo: servem só para entender os boletins. Nunca copiar nem adaptar o código deles.
-- **UI/UX:** toda tela e todo artefato visual seguem a skill **UI/UX Pro Max** (hoje em `.claude/skils/ui-ux-pro-max.zip`; a descompactação em `.claude/skills/ui-ux-pro-max/` aguarda autorização). Começar pelo `--design-system`, salvar o resultado em `docs/design/` e aplicar o Pre-Delivery Checklist da skill no aceite. Detalhes em `docs/planejamento/16-diretrizes-ui-ux.md`.
+- **UI/UX:** toda tela e todo artefato visual seguem a skill **UI/UX Pro Max**, descompactada em `.claude/skills/ui-ux-pro-max/`. Ela fica idêntica ao zip original em `.claude/skils/`, e por isso o ruff e o pre-commit a ignoram. Os scripts rodam com `python -E -s` (o `-I` impede o script de importar o próprio `core.py`). O design system está em `docs/design/design-system.md`, com as cores oficiais do IF e os contrastes. Aplique o Pre-Delivery Checklist da skill no aceite. Detalhes em `docs/planejamento/16-diretrizes-ui-ux.md`.
 - Responder em português; salvar os artefatos dentro desta pasta.
 - Não inventar regras institucionais. Regras sem base normativa ficam parametrizadas e marcadas "pendente de confirmação" (lista PRC-01…18 em `docs/planejamento/04-regimento-regras-de-negocio.md`; as decisões já tomadas estão em `14-decisoes-pendencias.md`).
 
@@ -63,7 +63,14 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
 - **Testes:** ficam em `tests/`, espelhando as apps (`tests/ops/…`). Os de navegador ficam em `tests/e2e/`, com o marcador `e2e`; o `conftest.py` dessa pasta liga `DJANGO_ALLOW_ASYNC_UNSAFE` por causa do Playwright síncrono. O banco de teste (`test_suap_v2`) é criado pelo usuário `suap_v2`, que tem CREATEDB.
 - **Pre-commit:** roda ruff e bandit em cada commit. Um `# nosec` exige justificativa no próprio código.
 - **Terminais antigos:** se não acharem `python`, `py` ou `git` (abertos antes da instalação), use os caminhos do `.venv` ou recarregue o PATH.
-- **Sem `migrate` até a E1:** o modelo de usuário personalizado precisa existir antes da primeira migração.
+- **Banco:** depois de puxar mudanças, rode `.\.venv\Scripts\python manage.py migrate`. O usuário é `contas.Usuario`, com login pelo e-mail institucional e perfil PROFESSOR, COORDENADOR ou ADMIN. O primeiro administrador é criado com `manage.py createsuperuser`. A tabela de auditoria tem um gatilho no PostgreSQL que barra `UPDATE` e `DELETE` (migração `auditoria/0002`).
+- **Contas (E1):**
+  - regras de acesso só em `apps/contas/escopo.py`;
+  - casos de uso do cadastro em `apps/contas/servicos.py`, porque as views só chamam os serviços;
+  - auditoria pelo `apps/auditoria/registro.registrar()`; login, logout, falha e bloqueio são gravados por sinais em `apps/auditoria/sinais.py`;
+  - bloqueio por tentativas pelo django-axes, por conta e não por IP (justificativa em `config/settings/base.py`);
+  - em testes, use `client.force_login`, porque `client.login` não passa a requisição que o axes exige.
+- **Fábricas de teste:** `tests/apoio/fabricas.py` (`ProfessorFactory`, `CoordenadorFactory`, `AdminFactory`; senha padrão `SENHA_PADRAO`).
 - **Boletins de teste:** o gabarito JSON do boletim de exemplo fica em `tests/fixtures/boletins/` (detalhes no `README.md` dessa pasta). As fixtures `boletim_exemplo`, `gabarito_exemplo` e `boletim_digitalizado("300dpi" | "150dpi" | "300dpi_inclinado" | "300dpi_girado90")` estão em `tests/conftest.py`. As versões digitalizadas (só imagem, para OCR) são geradas na hora por `tests/apoio/digitalizacao.py` e não são versionadas. O código de apoio aos testes fica em `tests/apoio/`.
 - **CI:** `.github/workflows/ci.yml` roda em cada push na `main` e em pull requests. Ele usa o runner `windows-2025`, instala as mesmas versões do ambiente local e executa `verificar-ambiente.ps1`, `makemigrations --check`, o pre-commit e o `test.ps1`. As versões instaladas:
   - Python 3.12.10;

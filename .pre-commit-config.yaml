@@ -1,5 +1,7 @@
 # Ganchos executados antes de cada commit. Instalar com: .venv\Scripts\pre-commit install
 # Versões alinhadas com requirements-dev.txt (ruff 0.17.2, bandit 1.9.4).
+# A skill de terceiros em .claude/skills/ fica idêntica ao zip original: nenhum gancho a altera.
+exclude: ^\.claude/skills/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

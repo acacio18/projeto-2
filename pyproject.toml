@@ -7,7 +7,8 @@ requires-python = ">=3.12,<3.13"
 [tool.ruff]
 line-length = 110
 target-version = "py312"
-extend-exclude = ["**/migrations/**"]
+# .claude/skills: skill de terceiros (UI/UX Pro Max), mantida idêntica ao zip original.
+extend-exclude = ["**/migrations/**", ".claude/**"]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "UP", "C4", "SIM", "DJ", "PT"]
