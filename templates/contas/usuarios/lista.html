@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Usuários{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Usuários</h1>
+    <p>Professores, coordenadores e administradores com acesso ao SUAP V2.</p>
+  </div>
+  <a class="botao" href="{% url 'usuarios:novo' %}">{% icone "user-plus" %}<span>Novo usuário</span></a>
+</div>
+
+<form method="get" class="filtros" role="search" aria-label="Filtrar usuários">
+  <div class="campo">
+    <label class="campo__rotulo" for="{{ filtro.q.id_for_label }}">{{ filtro.q.label }}</label>
+    {{ filtro.q }}
+  </div>
+  <div class="campo">
+    <label class="campo__rotulo" for="{{ filtro.perfil.id_for_label }}">{{ filtro.perfil.label }}</label>
+    {{ filtro.perfil }}
+  </div>
+  <div class="campo">
+    <label class="campo__rotulo" for="{{ filtro.situacao.id_for_label }}">{{ filtro.situacao.label }}</label>
+    {{ filtro.situacao }}
+  </div>
+  <div class="campo">
+    <button type="submit" class="botao botao--secundario">{% icone "search" %}<span>Filtrar</span></button>
+  </div>
+</form>
+
+<div class="tabela-rolavel">
+  <table class="tabela tabela--cartoes">
+    <caption>{{ pagina.paginator.count }} usuário{{ pagina.paginator.count|pluralize }} encontrado{{ pagina.paginator.count|pluralize }}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Perfil</th>
+        <th scope="col">Situação</th>
+        <th scope="col">Último acesso</th>
+        <th scope="col"><span class="so-leitor">Ações</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for usuario in pagina %}
+      <tr>
+        <td class="tabela__principal">{{ usuario.nome }}{% if usuario == user %} <span class="etiqueta etiqueta--neutra">você</span>{% endif %}</td>
+        <td data-rotulo="E-mail">{{ usuario.email }}</td>
+        <td data-rotulo="Perfil">{{ usuario.get_perfil_display }}</td>
+        <td data-rotulo="Situação">{% include "contas/usuarios/situacao.html" %}</td>
+        <td class="numero" data-rotulo="Último acesso">{% if usuario.last_login %}{{ usuario.last_login|date:"d/m/Y H:i" }}{% else %}<span class="etiqueta etiqueta--neutra">nunca</span>{% endif %}</td>
+        <td><a class="botao botao--discreto" href="{% url 'usuarios:editar' usuario.pk %}" aria-label="Editar {{ usuario.nome }}">{% icone "pencil" %}<span>Editar</span></a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="tabela__vazia">Nenhum usuário encontrado com esses filtros.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if pagina.paginator.num_pages > 1 %}
+<nav class="paginacao" aria-label="Paginação">
+  <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+  <span class="acoes acoes--compactas">
+    {% if pagina.has_previous %}<a class="botao botao--secundario" href="?{{ parametros }}{% if parametros %}&amp;{% endif %}pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+    {% if pagina.has_next %}<a class="botao botao--secundario" href="?{{ parametros }}{% if parametros %}&amp;{% endif %}pagina={{ pagina.next_page_number }}">Próxima</a>{% endif %}
+  </span>
+</nav>
+{% endif %}
+{% endblock %}

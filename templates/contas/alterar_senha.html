@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Alterar senha{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Alterar senha</h1>
+    <p>Ao salvar, você continua conectado aqui, e as outras sessões abertas com a senha antiga são encerradas.</p>
+  </div>
+</div>
+<div class="cartao cartao--estreito">
+  {% include "parciais/erros_formulario.html" %}
+  <form method="post" class="formulario" data-envio-unico novalidate>
+    {% csrf_token %}
+    {% include "parciais/campo.html" with campo=form.old_password senha=True %}
+    {% include "parciais/campo.html" with campo=form.new_password1 senha=True %}
+    {% include "parciais/campo.html" with campo=form.new_password2 senha=True %}
+    <div class="acoes acoes--compactas">
+      <button type="submit" class="botao" data-texto-enviando="Salvando…">
+        <span class="botao__carregando" aria-hidden="true"></span>{% icone "key-round" %}<span data-rotulo>Salvar nova senha</span>
+      </button>
+      <a class="botao botao--secundario" href="{% url 'painel' %}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

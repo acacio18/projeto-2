@@ -1,0 +1,20 @@
+{% extends "base_acesso.html" %}
+{% load interface %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<h1>Entrar</h1>
+{% include "parciais/erros_formulario.html" %}
+<form method="post" class="formulario" data-envio-unico novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {% include "parciais/campo.html" with campo=form.username %}
+  {% include "parciais/campo.html" with campo=form.password senha=True %}
+  <button type="submit" class="botao botao--largo" data-texto-enviando="Entrando…">
+    <span class="botao__carregando" aria-hidden="true"></span>{% icone "log-in" %}<span data-rotulo>Entrar</span>
+  </button>
+</form>
+<p class="nota"><a href="{% url 'contas:esqueci_senha' %}">Esqueci minha senha</a></p>
+{% endblock %}
+{% block depois_do_cartao %}
+<p class="nota nota--centro">Primeiro acesso? Use o link do convite que chegou no seu e-mail institucional.</p>
+{% endblock %}

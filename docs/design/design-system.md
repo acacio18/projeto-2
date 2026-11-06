@@ -1,6 +1,6 @@
 # Design system do SUAP V2
 
-> Gerado no início da E1 (06/11/2026) com a skill **UI/UX Pro Max** (`.claude/skills/ui-ux-pro-max/`) e com as cores do **Manual de Aplicação da Marca IF**. Este documento é revisado pelo usuário **antes de qualquer tela** (doc 16 do planejamento).
+> Gerado no início da E1 (06/11/2026) com a skill **UI/UX Pro Max** (`.claude/skills/ui-ux-pro-max/`) e com as cores do **Manual de Aplicação da Marca IF**. **Aprovado pelo usuário em 06/11/2026**, antes de qualquer tela (doc 16 do planejamento), com as escolhas Open Sans e CSS próprio.
 
 ## 1. Como foi gerado
 
@@ -86,7 +86,9 @@ As escalas foram geradas em OKLCH: mesma matiz da cor oficial, variando só a lu
 
 Regra da skill: **a cor nunca é o único indicador**. Todo status leva ícone e texto. Isso vale principalmente para os níveis de risco da E5, porque verde e vermelho se confundem no daltonismo mais comum.
 
-## 4. Tipografia — **decisão pendente do usuário**
+## 4. Tipografia — **decidido: Open Sans** (usuário, 06/11/2026)
+
+Arquivo variável `@fontsource-variable/open-sans@5.3.0`, só o subconjunto latino, em `static/fontes/`. A origem e os hashes estão em [recursos-de-terceiros.md](recursos-de-terceiros.md). As opções avaliadas foram:
 
 | Opção | Títulos | Texto | A favor | Contra |
 |---|---|---|---|---|
@@ -148,7 +150,9 @@ O tema segue `prefers-color-scheme` e tem um botão de troca, com a preferência
 - **Link "pular para o conteúdo"** no início de cada página.
 - **Pre-Delivery Checklist da skill:** aplicado e registrado na evidência de cada etapa com telas (E1, E3, E6 e E7).
 
-## 7. Implementação do CSS — **decisão pendente do usuário**
+## 7. Implementação do CSS — **decidido: CSS próprio** (usuário, 06/11/2026)
+
+O CSS fica em `static/css/app.css`, com os tokens da seção 5 como variáveis CSS e organizado em base, layout e componentes. As opções avaliadas foram:
 
 | Opção | Como | A favor | Contra |
 |---|---|---|---|

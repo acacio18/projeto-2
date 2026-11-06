@@ -7,9 +7,17 @@ Regras:
 - toda operação gera um evento de auditoria com o que mudou.
 """
 
+from axes.utils import reset as zerar_tentativas
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.db import transaction
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from apps.auditoria.models import TipoEvento
 from apps.auditoria.registro import registrar
@@ -76,6 +84,48 @@ def desativar_usuario(*, por, alvo, request=None):
     alvo.save(update_fields=["is_active", "atualizado_em"])
     registrar(TipoEvento.USUARIO_DESATIVADO, request=request, usuario=por, objeto=alvo)
     return alvo
+
+
+def link_para_definir_senha(usuario, request) -> str:
+    """Link de uso único (vale até a senha mudar ou o prazo PASSWORD_RESET_TIMEOUT acabar)."""
+    caminho = reverse(
+        "contas:definir_senha",
+        kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(usuario.pk)),
+            "token": default_token_generator.make_token(usuario),
+        },
+    )
+    return request.build_absolute_uri(caminho)
+
+
+def enviar_convite(*, por, alvo, request):
+    """Envia por e-mail o link para o usuário definir a própria senha (o administrador nunca a vê)."""
+    escopo.exigir_perfil(por, Perfil.ADMIN)
+    alvo = escopo.obter_usuario_visivel(por, alvo.pk)
+    if not alvo.is_active:
+        raise ValidationError("Reative o usuário antes de enviar o convite.", code="inativo")
+    if alvo.has_usable_password():
+        raise ValidationError(
+            "Este usuário já definiu a senha. Se esqueceu, ele pode usar “Esqueci minha senha”.",
+            code="senha_ja_definida",
+        )
+    contexto = {
+        "usuario": alvo,
+        "link": link_para_definir_senha(alvo, request),
+        "validade_horas": settings.PASSWORD_RESET_TIMEOUT // 3600,
+    }
+    assunto = render_to_string("contas/emails/convite_assunto.txt", contexto).strip()
+    corpo = render_to_string("contas/emails/convite.txt", contexto)
+    send_mail(assunto, corpo, None, [alvo.email])
+    registrar(TipoEvento.CONVITE_ENVIADO, request=request, usuario=por, objeto=alvo)
+
+
+def desbloquear_login(*, por, alvo, request=None):
+    """Zera as tentativas de login erradas (fim antecipado do bloqueio do django-axes)."""
+    escopo.exigir_perfil(por, Perfil.ADMIN)
+    alvo = escopo.obter_usuario_visivel(por, alvo.pk)
+    zerar_tentativas(username=alvo.email)
+    registrar(TipoEvento.LOGIN_DESBLOQUEADO, request=request, usuario=por, objeto=alvo)
 
 
 @transaction.atomic

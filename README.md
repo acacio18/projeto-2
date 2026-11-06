@@ -10,14 +10,18 @@ Sistema web de apoio a professores e coordenadores do **IFPB** (cursos técnicos
 
 ## Situação
 
-Em desenvolvimento. A **Etapa 0 (fundação técnica) está concluída**: ambiente, esqueleto Django, testes, scripts, boletins de teste e integração contínua. As funcionalidades começam na Etapa 1.
+Em desenvolvimento. Etapas concluídas:
+- **E0, fundação técnica:** ambiente, testes, scripts, boletins de teste e integração contínua.
+- **E1, acesso:** login pelo e-mail institucional, perfis Professor, Coordenador e Administrador, cadastro de usuários com convite por e-mail, bloqueio após 5 senhas erradas, auditoria e telas com tema claro e escuro.
+
+Próxima: E2 (modelo de dados e cadastros).
 
 ## Documentação
 
 - [Planejamento completo](docs/planejamento/README.md): requisitos (32 funcionalidades), regras do Regimento, arquitetura, etapas E0–E10, matriz de rastreabilidade e plano de testes.
 - [Decisões sobre regras pendentes](docs/planejamento/14-decisoes-pendencias.md)
 - [Análise do boletim SUAP de exemplo](docs/planejamento/15-analise-boletim-exemplo.md); o PDF (nomes fictícios) está em [docs/referencias/boletins/](docs/referencias/boletins/)
-- [Diretrizes de UI/UX](docs/planejamento/16-diretrizes-ui-ux.md)
+- [Diretrizes de UI/UX](docs/planejamento/16-diretrizes-ui-ux.md) e [design system](docs/design/design-system.md) (cores oficiais do IF, tipografia, componentes)
 - [Evidências por etapa](docs/evidencias/)
 
 ## Stack prevista
@@ -37,6 +41,15 @@ powershell -ExecutionPolicy Bypass -File scripts\verificar-ambiente.ps1   # conf
 powershell -ExecutionPolicy Bypass -File scripts\dev.ps1                  # sobe em http://127.0.0.1:8000 (saúde: /healthz)
 powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # lint, segurança, testes e auditoria de dependências
 ```
+
+### Primeiro acesso
+
+```powershell
+.\.venv\Scripts\python manage.py migrate            # cria as tabelas (rode de novo depois de cada atualização)
+.\.venv\Scripts\python manage.py createsuperuser    # primeiro administrador (e-mail @ifpb.edu.br)
+```
+
+Depois, entre em http://127.0.0.1:8000 e cadastre os professores e coordenadores em **Usuários**. Cada um recebe um convite por e-mail para criar a própria senha. Em desenvolvimento, o e-mail aparece no terminal do `dev.ps1`.
 
 ## Integração contínua
 

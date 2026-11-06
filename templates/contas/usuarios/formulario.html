@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}{% if novo %}Novo usuário{% else %}{{ alvo.nome }}{% endif %}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'usuarios:lista' %}">{% icone "arrow-left" %}Usuários</a>
+<div class="cabecalho-pagina">
+  <div>
+    {% if novo %}
+    <h1>Novo usuário</h1>
+    <p>A pessoa recebe um e-mail com o link para criar a própria senha. Ninguém mais a conhece.</p>
+    {% else %}
+    <h1>{{ alvo.nome }}</h1>
+    <p>{{ alvo.email }} · {% with usuario=alvo %}{% include "contas/usuarios/situacao.html" %}{% endwith %}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="duas-colunas">
+  <section class="cartao{% if novo %} cartao--estreito{% endif %}" aria-labelledby="titulo-dados">
+    <h2 class="cartao__titulo" id="titulo-dados">{% icone "user" %}Dados</h2>
+    {% include "parciais/erros_formulario.html" %}
+    <form method="post" class="formulario" data-envio-unico novalidate>
+      {% csrf_token %}
+      {% include "parciais/campo.html" with campo=form.nome %}
+      {% include "parciais/campo.html" with campo=form.email %}
+      {% include "parciais/campo.html" with campo=form.perfil %}
+      <div class="acoes acoes--compactas">
+        <button type="submit" class="botao" data-texto-enviando="Salvando…">
+          <span class="botao__carregando" aria-hidden="true"></span>{% if novo %}{% icone "send" %}<span data-rotulo>Cadastrar e enviar convite</span>{% else %}{% icone "circle-check" %}<span data-rotulo>Salvar alterações</span>{% endif %}
+        </button>
+        <a class="botao botao--secundario" href="{% url 'usuarios:lista' %}">Cancelar</a>
+      </div>
+    </form>
+  </section>
+
+  {% if not novo %}
+  <section class="cartao" aria-labelledby="titulo-acesso">
+    <h2 class="cartao__titulo" id="titulo-acesso">{% icone "shield-check" %}Acesso</h2>
+    <dl class="detalhes">
+      <dt>Cadastrado em</dt><dd class="numero">{{ alvo.criado_em|date:"d/m/Y H:i" }}</dd>
+      <dt>Último acesso</dt><dd class="numero">{% if alvo.last_login %}{{ alvo.last_login|date:"d/m/Y H:i" }}{% else %}nunca entrou{% endif %}</dd>
+      <dt>Login</dt><dd>{% if bloqueado %}<span class="etiqueta etiqueta--aviso">{% icone "lock" %}Bloqueado por tentativas</span>{% else %}Liberado{% endif %}</dd>
+    </dl>
+    <div class="acoes">
+      {% if alvo.is_active and alvo.convite_pendente %}
+      <form method="post" action="{% url 'usuarios:reenviar_convite' alvo.pk %}" data-envio-unico>
+        {% csrf_token %}
+        <button type="submit" class="botao botao--secundario" data-texto-enviando="Enviando…"><span class="botao__carregando" aria-hidden="true"></span>{% icone "mail" %}<span data-rotulo>Reenviar convite</span></button>
+      </form>
+      {% endif %}
+      {% if bloqueado %}
+      <form method="post" action="{% url 'usuarios:desbloquear' alvo.pk %}" data-envio-unico>
+        {% csrf_token %}
+        <button type="submit" class="botao botao--secundario">{% icone "lock" %}<span>Desbloquear login</span></button>
+      </form>
+      {% endif %}
+      {% if alvo.is_active %}
+        {% if alvo != user %}
+        <a class="botao botao--perigo" href="{% url 'usuarios:desativar' alvo.pk %}">{% icone "user-x" %}<span>Desativar</span></a>
+        {% endif %}
+      {% else %}
+      <form method="post" action="{% url 'usuarios:reativar' alvo.pk %}" data-envio-unico>
+        {% csrf_token %}
+        <button type="submit" class="botao">{% icone "user-check" %}<span>Reativar</span></button>
+      </form>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

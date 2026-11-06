@@ -56,7 +56,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -80,6 +80,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -128,6 +129,7 @@ AXES_FAILURE_LIMIT = env.int("CONTAS_LOGIN_FALHAS_PARA_BLOQUEIO", default=5)
 AXES_COOLOFF_TIME = timedelta(minutes=env.int("CONTAS_LOGIN_BLOQUEIO_MINUTOS", default=30))
 AXES_LOCKOUT_PARAMETERS = ["username"]
 AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_TEMPLATE = "contas/bloqueado.html"  # resposta 429 com explicação
 AXES_USERNAME_FORM_FIELD = "username"  # nome do campo no formulário de login do Django
 AXES_USERNAME_CALLABLE = "apps.contas.autenticacao.email_da_tentativa"
 AXES_CLIENT_IP_CALLABLE = "apps.contas.rede.ip_do_cliente"

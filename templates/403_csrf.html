@@ -1,0 +1,14 @@
+{% extends "base_acesso.html" %}
+{% load interface %}
+{% block titulo %}Formulário expirado{% endblock %}
+{% block conteudo %}
+<h1>Formulário expirado</h1>
+<div class="alerta alerta--aviso" role="alert">
+  {% icone "triangle-alert" %}
+  <p>Por segurança, este formulário não vale mais (a página ficou aberta por muito tempo ou a sessão terminou).</p>
+</div>
+<p>Volte, recarregue a página e envie de novo.</p>
+<div class="acoes">
+  <a class="botao" href="{% url 'painel' %}">{% icone "layout-dashboard" %}<span>Ir para o painel</span></a>
+</div>
+{% endblock %}

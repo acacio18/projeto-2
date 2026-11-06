@@ -1,0 +1,16 @@
+{% extends "base_acesso.html" %}
+{% load interface %}
+{% block titulo %}Esqueci minha senha{% endblock %}
+{% block conteudo %}
+<h1>Esqueci minha senha</h1>
+<p>Informe o seu e-mail institucional. Se ele estiver cadastrado, você receberá um link para criar uma nova senha.</p>
+{% include "parciais/erros_formulario.html" %}
+<form method="post" class="formulario" data-envio-unico novalidate>
+  {% csrf_token %}
+  {% include "parciais/campo.html" with campo=form.email %}
+  <button type="submit" class="botao botao--largo" data-texto-enviando="Enviando…">
+    <span class="botao__carregando" aria-hidden="true"></span>{% icone "send" %}<span data-rotulo>Enviar link</span>
+  </button>
+</form>
+<p class="nota"><a href="{% url 'contas:entrar' %}">Voltar para o login</a></p>
+{% endblock %}

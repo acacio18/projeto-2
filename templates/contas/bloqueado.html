@@ -1,0 +1,16 @@
+{% extends "base_acesso.html" %}
+{% load interface %}
+{% block titulo %}Acesso bloqueado temporariamente{% endblock %}
+{% block conteudo %}
+<h1>Acesso bloqueado temporariamente</h1>
+<div class="alerta alerta--aviso" role="alert">
+  {% icone "lock" %}
+  <p>Por segurança, esta conta foi bloqueada depois de várias tentativas de entrar com a senha errada.</p>
+</div>
+<p>Espere alguns minutos e tente de novo. Se não lembrar a senha, peça um link para criar outra: isso também libera o acesso.</p>
+<p>Se não foi você quem tentou entrar, avise a administração do sistema.</p>
+<div class="acoes">
+  <a class="botao" href="{% url 'contas:esqueci_senha' %}">{% icone "mail" %}<span>Esqueci minha senha</span></a>
+  <a class="botao botao--secundario" href="{% url 'contas:entrar' %}">{% icone "arrow-left" %}<span>Voltar</span></a>
+</div>
+{% endblock %}

@@ -19,6 +19,7 @@ class TipoEvento(models.TextChoices):
     LOGIN_FALHA = "LOGIN_FALHA", "Falha de login"
     LOGOUT = "LOGOUT", "Logout"
     CONTA_BLOQUEADA = "CONTA_BLOQUEADA", "Conta bloqueada por tentativas"
+    LOGIN_DESBLOQUEADO = "LOGIN_DESBLOQUEADO", "Login desbloqueado por um administrador"
     USUARIO_CRIADO = "USUARIO_CRIADO", "Usuário criado"
     USUARIO_ALTERADO = "USUARIO_ALTERADO", "Usuário alterado"
     USUARIO_DESATIVADO = "USUARIO_DESATIVADO", "Usuário desativado"

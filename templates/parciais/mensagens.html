@@ -1,0 +1,10 @@
+{% load interface %}{% if messages %}
+<ul class="mensagens">
+  {% for mensagem in messages %}
+  <li class="alerta {% if mensagem.level_tag == 'error' %}alerta--erro{% elif mensagem.level_tag == 'warning' %}alerta--aviso{% elif mensagem.level_tag == 'success' %}alerta--sucesso{% else %}alerta--info{% endif %}" role="{% if mensagem.level_tag == 'error' %}alert{% else %}status{% endif %}">
+    {% if mensagem.level_tag == 'error' %}{% icone "circle-alert" %}{% elif mensagem.level_tag == 'warning' %}{% icone "triangle-alert" %}{% elif mensagem.level_tag == 'success' %}{% icone "circle-check" %}{% else %}{% icone "info" %}{% endif %}
+    <p>{{ mensagem }}</p>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

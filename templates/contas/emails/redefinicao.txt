@@ -1,0 +1,12 @@
+{% autoescape off %}Olá, {{ user.get_short_name }}.
+
+Recebemos um pedido para criar uma nova senha para a sua conta no SUAP V2 ({{ email }}).
+
+Para criar a nova senha, abra o link abaixo:
+
+{{ protocol }}://{{ domain }}{% url 'contas:definir_senha' uidb64=uid token=token %}
+
+O link funciona uma vez só e vence em pouco tempo. Se não foi você quem pediu, ignore este e-mail: a sua senha atual continua valendo.
+
+SUAP V2 · IFPB (mensagem automática, não responda)
+{% endautoescape %}

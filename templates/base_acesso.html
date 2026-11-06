@@ -1,0 +1,16 @@
+{% extends "base_documento.html" %}
+{% block corpo %}
+<main class="acesso" id="conteudo" tabindex="-1">
+  <div class="acesso__cartao">
+    <div class="acesso__marca">
+      <span class="marca">SUAP V2 <span class="marca__instituicao">IFPB</span></span>
+      <p>Análise de boletins para professores e coordenadores</p>
+    </div>
+    {% include "parciais/mensagens.html" %}
+    <div class="cartao">
+      {% block conteudo %}{% endblock %}
+    </div>
+    {% block depois_do_cartao %}{% endblock %}
+  </div>
+</main>
+{% endblock %}

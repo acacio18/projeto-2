@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Painel{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Olá, {{ user.get_short_name }}</h1>
+    <p>Você entrou como <strong>{{ user.get_perfil_display }}</strong>.</p>
+  </div>
+</div>
+
+{% if resumo_usuarios %}
+<section class="bloco" aria-labelledby="titulo-usuarios">
+  <h2 id="titulo-usuarios">Usuários</h2>
+  <div class="grade-cartoes grade-cartoes--indicadores">
+    <div class="cartao indicador"><span class="indicador__valor numero">{{ resumo_usuarios.ativos }}</span><span class="indicador__rotulo">usuários ativos</span></div>
+    <div class="cartao indicador"><span class="indicador__valor numero">{{ resumo_usuarios.professores }}</span><span class="indicador__rotulo">professores</span></div>
+    <div class="cartao indicador"><span class="indicador__valor numero">{{ resumo_usuarios.coordenadores }}</span><span class="indicador__rotulo">coordenadores</span></div>
+    <div class="cartao indicador"><span class="indicador__valor numero">{{ resumo_usuarios.convites }}</span><span class="indicador__rotulo">convites pendentes</span></div>
+  </div>
+  <div class="acoes acoes--compactas">
+    <a class="botao" href="{% url 'usuarios:novo' %}">{% icone "user-plus" %}<span>Novo usuário</span></a>
+    <a class="botao botao--secundario" href="{% url 'usuarios:lista' %}">{% icone "users" %}<span>Ver usuários</span></a>
+  </div>
+</section>
+{% endif %}
+
+<section class="cartao" aria-labelledby="titulo-proximos">
+  <h2 class="cartao__titulo" id="titulo-proximos">{% icone "info" %}O que vem a seguir</h2>
+  {% if user.eh_professor %}
+  <p>Em breve você vai poder enviar o PDF do boletim de cada diário e acompanhar estatísticas, alunos que precisam de atenção e a evolução da turma.</p>
+  {% elif user.eh_coordenador %}
+  <p>Em breve você vai poder acompanhar os diários das turmas do seu curso, comparar turmas e bimestres e ver os alertas para o Conselho de Classe.</p>
+  {% else %}
+  <p>Cadastre os professores e coordenadores. Cada um recebe um convite por e-mail para criar a própria senha. Os boletins e os painéis de turmas chegam nas próximas etapas.</p>
+  {% endif %}
+</section>
+{% endblock %}

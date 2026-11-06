@@ -1,5 +1,19 @@
 """Apoio à autenticação usado pelo django-axes."""
 
+from axes.models import AccessAttempt
+from django.conf import settings
+from django.db.models import Sum
+from django.utils import timezone
+
+
+def login_bloqueado(email: str) -> bool:
+    """A conta está bloqueada agora por excesso de tentativas erradas?"""
+    desde = timezone.now() - settings.AXES_COOLOFF_TIME
+    falhas = AccessAttempt.objects.filter(username=email.strip().lower(), attempt_time__gte=desde).aggregate(
+        total=Sum("failures_since_start")
+    )["total"]
+    return (falhas or 0) >= settings.AXES_FAILURE_LIMIT
+
 
 def email_da_tentativa(request, credentials) -> str | None:
     """E-mail digitado no login, normalizado.

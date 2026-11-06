@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Desativar {{ alvo.nome }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'usuarios:editar' alvo.pk %}">{% icone "arrow-left" %}{{ alvo.nome }}</a>
+<div class="cartao cartao--estreito">
+  <h1>Desativar {{ alvo.nome }}?</h1>
+  <p>{{ alvo.nome }} ({{ alvo.email }}) não vai mais conseguir entrar no SUAP V2. Nada é apagado: o histórico e a auditoria continuam, e você pode reativar o acesso quando quiser.</p>
+  <form method="post" data-envio-unico>
+    {% csrf_token %}
+    <div class="acoes">
+      <button type="submit" class="botao botao--perigo" data-texto-enviando="Desativando…">
+        <span class="botao__carregando" aria-hidden="true"></span>{% icone "user-x" %}<span data-rotulo>Sim, desativar</span>
+      </button>
+      <a class="botao botao--secundario" href="{% url 'usuarios:editar' alvo.pk %}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

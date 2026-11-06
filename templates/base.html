@@ -1,0 +1,38 @@
+{% extends "base_documento.html" %}
+{% load interface %}
+{% block corpo %}
+<header class="cabecalho">
+  <div class="cabecalho__interno">
+    <a class="marca" href="{% url 'painel' %}">SUAP V2 <span class="marca__instituicao">IFPB</span></a>
+    {% with secao=request.resolver_match.namespace|default:request.resolver_match.url_name %}
+    <nav class="navegacao" id="navegacao-principal" aria-label="Navegação principal">
+      <a class="navegacao__link" href="{% url 'painel' %}"{% if secao == 'painel' %} aria-current="page"{% endif %}>{% icone "layout-dashboard" %}Painel</a>
+      {% if user.eh_admin %}
+      <a class="navegacao__link" href="{% url 'usuarios:lista' %}"{% if secao == 'usuarios' %} aria-current="page"{% endif %}>{% icone "users" %}Usuários</a>
+      {% endif %}
+      <a class="navegacao__link" href="{% url 'contas:alterar_senha' %}"{% if request.resolver_match.url_name == 'alterar_senha' %} aria-current="page"{% endif %}>{% icone "key-round" %}Alterar senha</a>
+    </nav>
+    {% endwith %}
+    <div class="cabecalho__acoes">
+      <div class="usuario-atual">
+        <span>{{ user.nome }}</span>
+        <span class="usuario-atual__perfil">{{ user.get_perfil_display }}</span>
+      </div>
+      <button type="button" class="botao botao--discreto botao--icone" data-alternar-tema aria-pressed="false" aria-label="Alternar tema claro ou escuro">
+        {% icone "moon" %}
+      </button>
+      <form method="post" action="{% url 'contas:sair' %}">
+        {% csrf_token %}
+        <button type="submit" class="botao botao--secundario">{% icone "log-out" %}<span>Sair</span></button>
+      </form>
+      <button type="button" class="botao botao--discreto botao--icone botao-menu" data-alternar-menu aria-controls="navegacao-principal" aria-expanded="false" aria-label="Abrir menu de navegação">
+        {% icone "menu" %}
+      </button>
+    </div>
+  </div>
+</header>
+<main class="conteudo" id="conteudo" tabindex="-1">
+  {% include "parciais/mensagens.html" %}
+  {% block conteudo %}{% endblock %}
+</main>
+{% endblock %}

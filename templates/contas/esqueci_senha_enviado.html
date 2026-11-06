@@ -1,0 +1,14 @@
+{% extends "base_acesso.html" %}
+{% load interface %}
+{% block titulo %}Verifique o seu e-mail{% endblock %}
+{% block conteudo %}
+<h1>Verifique o seu e-mail</h1>
+<div class="alerta alerta--info" role="status">
+  {% icone "mail" %}
+  <p>Se o e-mail informado estiver cadastrado, enviamos um link para criar uma nova senha.</p>
+</div>
+<p>O link vale por {{ validade_horas }} horas e funciona uma vez só. Não chegou? Confira a caixa de spam ou peça de novo.</p>
+<div class="acoes">
+  <a class="botao botao--secundario" href="{% url 'contas:entrar' %}">{% icone "arrow-left" %}<span>Voltar para o login</span></a>
+</div>
+{% endblock %}

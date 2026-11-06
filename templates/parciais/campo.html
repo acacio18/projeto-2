@@ -1,0 +1,20 @@
+{% load interface %}{# Campo de formulário acessível: rótulo, ajuda e erro ligados por aria-describedby. #}
+<div class="campo{% if campo.errors %} campo--erro{% endif %}">
+  <label class="campo__rotulo" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+  {% if senha %}
+  <div class="campo-senha">
+    {{ campo }}
+    <button type="button" class="botao botao--discreto botao--icone" data-alternar-senha="{{ campo.id_for_label }}" aria-pressed="false" aria-label="Mostrar senha" hidden>
+      <span class="icone--mostrar">{% icone "eye" %}</span><span class="icone--ocultar">{% icone "eye-off" %}</span>
+    </button>
+  </div>
+  {% else %}
+  {{ campo }}
+  {% endif %}
+  {% if campo.help_text %}<p class="campo__ajuda" id="{{ campo.id_for_label }}_ajuda">{{ campo.help_text|safe }}</p>{% endif %}
+  {% if campo.errors %}
+  <ul class="campo__erro" id="{{ campo.id_for_label }}_erro">
+    {% for erro in campo.errors %}<li>{% icone "circle-alert" %}<span>{{ erro }}</span></li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>

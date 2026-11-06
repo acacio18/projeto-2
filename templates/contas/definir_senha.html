@@ -1,0 +1,28 @@
+{% extends "base_acesso.html" %}
+{% load interface %}
+{% block titulo %}{% if validlink %}Criar senha{% else %}Link inválido{% endif %}{% endblock %}
+{% block conteudo %}
+{% if validlink %}
+<h1>Criar senha</h1>
+<p>Escolha a senha que você vai usar para entrar no SUAP V2.</p>
+{% include "parciais/erros_formulario.html" %}
+<form method="post" class="formulario" data-envio-unico novalidate>
+  {% csrf_token %}
+  {% include "parciais/campo.html" with campo=form.new_password1 senha=True %}
+  {% include "parciais/campo.html" with campo=form.new_password2 senha=True %}
+  <button type="submit" class="botao botao--largo" data-texto-enviando="Salvando…">
+    <span class="botao__carregando" aria-hidden="true"></span>{% icone "key-round" %}<span data-rotulo>Salvar senha</span>
+  </button>
+</form>
+{% else %}
+<h1>Link inválido ou vencido</h1>
+<div class="alerta alerta--erro" role="alert">
+  {% icone "circle-alert" %}
+  <p>Este link já foi usado ou passou do prazo.</p>
+</div>
+<p>Peça um novo link em “Esqueci minha senha”. Se era um convite de primeiro acesso, peça à administração que reenvie.</p>
+<div class="acoes">
+  <a class="botao" href="{% url 'contas:esqueci_senha' %}">{% icone "mail" %}<span>Pedir novo link</span></a>
+</div>
+{% endif %}
+{% endblock %}

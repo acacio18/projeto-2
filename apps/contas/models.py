@@ -88,6 +88,11 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return self.nome.split()[0] if self.nome else self.email
 
     @property
+    def convite_pendente(self) -> bool:
+        """Ainda não definiu a senha pelo link do convite."""
+        return not self.has_usable_password()
+
+    @property
     def eh_admin(self) -> bool:
         return self.perfil == Perfil.ADMIN
 

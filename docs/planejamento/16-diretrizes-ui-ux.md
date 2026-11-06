@@ -39,3 +39,10 @@
 ## Decisões do usuário (26/10/2026)
 - **Identidade visual: usar as cores do IFPB.** O design system gerado pela skill continua valendo para tipografia, espaçamento, componentes, gráficos e acessibilidade, mas a paleta parte das cores institucionais. Os valores exatos (verde e vermelho institucionais e variações) serão tirados do manual de identidade visual oficial do IFPB / Rede Federal no início da E1, e não estimados. Todas as combinações de texto precisam ter contraste mínimo de 4,5:1, como a skill exige.
 - **Descompactar a skill só quando for necessária**, ou seja, no início da E1, antes da primeira tela.
+
+## Decisões do usuário (06/11/2026, início da E1)
+- **Design system aprovado:** `docs/design/design-system.md`. Cores derivadas do Manual de Aplicação da Marca IF 2015 (verde `#2f9e41`, vermelho `#cd191e`), com contraste WCAG calculado e testado automaticamente (`tests/paineis/test_contraste.py`).
+- **Tipografia: Open Sans**, a fonte oficial da marca IF, hospedada no próprio sistema. Substitui o par sugerido pela skill.
+- **CSS próprio** (`static/css/app.css`), sem Tailwind: nenhuma etapa de build e nenhum executável de terceiros. Isso substitui o ajuste 1 acima. As regras de UX e acessibilidade da skill continuam valendo.
+- **Ícones Lucide** em SVG local, conforme o ajuste 2.
+- A skill foi descompactada em `.claude/skills/ui-ux-pro-max/`, idêntica ao zip. Os scripts rodam com `python -E -s`, porque o `-I` impede o script de importar o próprio `core.py`.

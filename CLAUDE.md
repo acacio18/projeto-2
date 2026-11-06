@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1** (login, perfis, permissões, cadastro de professores e design system) está **em andamento**. A parte 1 está pronta: design system, modelo de usuário, auditoria, bloqueio de login, escopo e serviços, com testes. A parte 2 são as telas, que aguardam a revisão do design system pelo usuário. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1 está concluída**: design system aprovado, login, perfis, política de escopo, cadastro de usuários com convite por e-mail, auditoria e telas. A evidência está em `docs/evidencias/E1-infraestrutura-e-acesso.md`. A próxima é a **E2** (modelo de dados e cadastros), que depende de autorização. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -70,6 +70,16 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
   - auditoria pelo `apps/auditoria/registro.registrar()`; login, logout, falha e bloqueio são gravados por sinais em `apps/auditoria/sinais.py`;
   - bloqueio por tentativas pelo django-axes, por conta e não por IP (justificativa em `config/settings/base.py`);
   - em testes, use `client.force_login`, porque `client.login` não passa a requisição que o axes exige.
+- **Telas:**
+  - templates em `templates/` (bases `base.html`, para quem está logado, e `base_acesso.html`, para login e senhas; parciais em `templates/parciais/`, como `campo.html` para campos acessíveis);
+  - CSS próprio em `static/css/app.css`, com tokens do design system e temas claro e escuro; JS em `static/js/`, sem código em linha;
+  - ícones com `{% load interface %}{% icone "nome" %}` (SVGs Lucide em `apps/paineis/icones/`);
+  - formulários herdam `apps.paineis.formularios.FormularioAcessivel`;
+  - não use `style=` nos templates: crie uma classe no CSS (CSP da E9).
+- **Testes de interface:**
+  - `tests/paineis/test_contraste.py` lê os tokens do CSS e exige contraste WCAG nos dois temas;
+  - `tests/e2e/test_acesso_navegador.py` cobre o fluxo do convite, as larguras de 375 a 1440 px, o menu, o tema, a senha e o teclado;
+  - capturas para revisão visual: `$env:SUAP_CAPTURAS='pasta'; .\.venv\Scripts\python -m pytest tests/e2e/test_capturas_telas.py`.
 - **Fábricas de teste:** `tests/apoio/fabricas.py` (`ProfessorFactory`, `CoordenadorFactory`, `AdminFactory`; senha padrão `SENHA_PADRAO`).
 - **Boletins de teste:** o gabarito JSON do boletim de exemplo fica em `tests/fixtures/boletins/` (detalhes no `README.md` dessa pasta). As fixtures `boletim_exemplo`, `gabarito_exemplo` e `boletim_digitalizado("300dpi" | "150dpi" | "300dpi_inclinado" | "300dpi_girado90")` estão em `tests/conftest.py`. As versões digitalizadas (só imagem, para OCR) são geradas na hora por `tests/apoio/digitalizacao.py` e não são versionadas. O código de apoio aos testes fica em `tests/apoio/`.
 - **CI:** `.github/workflows/ci.yml` roda em cada push na `main` e em pull requests. Ele usa o runner `windows-2025`, instala as mesmas versões do ambiente local e executa `verificar-ambiente.ps1`, `makemigrations --check`, o pre-commit e o `test.ps1`. As versões instaladas:

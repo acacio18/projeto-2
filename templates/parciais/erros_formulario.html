@@ -1,0 +1,12 @@
+{% load interface %}{% if form.errors %}
+<div class="alerta alerta--erro" role="alert">
+  {% icone "circle-alert" %}
+  <div>
+    {% if form.non_field_errors %}
+      {% for erro in form.non_field_errors %}<p>{{ erro }}</p>{% endfor %}
+    {% else %}
+      <p>Corrija {{ form.errors|length }} campo{{ form.errors|length|pluralize }} destacado{{ form.errors|length|pluralize }} abaixo.</p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

@@ -1,0 +1,1 @@
+{% load interface %}{% if not usuario.is_active %}<span class="etiqueta etiqueta--neutra">{% icone "user-x" %}Desativado</span>{% elif usuario.convite_pendente %}<span class="etiqueta etiqueta--aviso">{% icone "mail" %}Convite pendente</span>{% else %}<span class="etiqueta etiqueta--sucesso">{% icone "user-check" %}Ativo</span>{% endif %}

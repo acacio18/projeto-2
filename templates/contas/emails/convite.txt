@@ -1,0 +1,14 @@
+{% autoescape off %}Olá, {{ usuario.get_short_name }}.
+
+Você foi cadastrado(a) no SUAP V2 do IFPB, sistema de análise dos boletins do SUAP para professores e coordenadores, com o perfil {{ usuario.get_perfil_display }}.
+
+Para criar a sua senha e fazer o primeiro acesso, abra o link abaixo:
+
+{{ link }}
+
+O link vale por {{ validade_horas }} horas e funciona uma vez só. Depois disso, peça à administração do sistema que reenvie o convite.
+
+Se você não esperava este e-mail, pode ignorá-lo.
+
+SUAP V2 · IFPB (mensagem automática, não responda)
+{% endautoescape %}

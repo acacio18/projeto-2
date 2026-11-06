@@ -1,9 +1,14 @@
 """Rotas principais do SUAP V2."""
 
-from django.urls import path
+from django.urls import include, path
 
 from apps.ops.views import healthz
+from apps.paineis import views as paineis
 
 urlpatterns = [
+    path("", paineis.inicio, name="inicio"),
+    path("painel/", paineis.painel, name="painel"),
+    path("", include("apps.contas.urls")),
+    path("usuarios/", include("apps.contas.urls_usuarios")),
     path("healthz", healthz, name="healthz"),
 ]
