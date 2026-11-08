@@ -146,3 +146,10 @@ DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="SUAP V2 <nao-resp
 
 # Executável do Tesseract OCR (precisa do idioma "por" instalado).
 TESSERACT_CMD = env("TESSERACT_CMD", default=r"C:\Program Files\Tesseract-OCR\tesseract.exe")
+
+# --- Cadastros acadêmicos e importação (E2) ----------------------------------------------------
+# Formato da matrícula (PRC-09): 12 dígitos no boletim de exemplo; pendente de confirmação.
+ACADEMICO_MATRICULA_REGEX = env("ACADEMICO_MATRICULA_REGEX", default=r"^\d{12}$")
+
+# PDFs enviados ficam numa pasta privada (fora de static/, nunca servida diretamente; fora do Git).
+MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", default=str(BASE_DIR / "media"))

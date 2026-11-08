@@ -28,6 +28,15 @@ class TipoEvento(models.TextChoices):
     SENHA_ALTERADA = "SENHA_ALTERADA", "Senha alterada pelo próprio usuário"
     SENHA_REDEFINICAO_PEDIDA = "SENHA_REDEFINICAO_PEDIDA", "Redefinição de senha pedida"
     SENHA_DEFINIDA = "SENHA_DEFINIDA", "Senha definida por link (convite ou redefinição)"
+    CADASTRO_CRIADO = "CADASTRO_CRIADO", "Cadastro criado (curso, turma, disciplina ou diário)"
+    CADASTRO_ALTERADO = "CADASTRO_ALTERADO", "Cadastro alterado"
+    CADASTRO_EXCLUIDO = "CADASTRO_EXCLUIDO", "Cadastro excluído"
+    COORDENACAO_ADICIONADA = "COORDENACAO_ADICIONADA", "Coordenador vinculado a curso"
+    COORDENACAO_REMOVIDA = "COORDENACAO_REMOVIDA", "Coordenador desvinculado de curso"
+    VERSAO_REGISTRADA = "VERSAO_REGISTRADA", "Notas de um boletim registradas (aguardando confirmação)"
+    VERSAO_CONFIRMADA = "VERSAO_CONFIRMADA", "Versão de notas confirmada"
+    VERSAO_VIGENTE_ALTERADA = "VERSAO_VIGENTE_ALTERADA", "Versão vigente de um diário trocada"
+    VERSAO_DESCARTADA = "VERSAO_DESCARTADA", "Versão de notas descartada antes da confirmação"
 
 
 class EventosQuerySet(models.QuerySet):
