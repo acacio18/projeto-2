@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+{% if voltar.1 %}<a class="voltar" href="{% url voltar.0 voltar.1 %}">{% else %}<a class="voltar" href="{% url voltar.0 %}">{% endif %}{% icone "arrow-left" %}Voltar</a>
+<div class="cabecalho-pagina"><div><h1>{{ titulo }}</h1></div></div>
+<div class="cartao cartao--estreito">
+  {% include "parciais/erros_formulario.html" %}
+  <form method="post" class="formulario" data-envio-unico novalidate>
+    {% csrf_token %}
+    {% for campo in form %}
+      {% include "parciais/campo.html" with campo=campo %}
+    {% endfor %}
+    <div class="acoes acoes--compactas">
+      <button type="submit" class="botao" data-texto-enviando="Salvando…">
+        <span class="botao__carregando" aria-hidden="true"></span>{% icone "circle-check" %}<span data-rotulo>Salvar</span>
+      </button>
+      {% if voltar.1 %}<a class="botao botao--secundario" href="{% url voltar.0 voltar.1 %}">{% else %}<a class="botao botao--secundario" href="{% url voltar.0 %}">{% endif %}Cancelar</a>
+      {% if excluir_url %}<a class="botao botao--discreto texto-perigo" href="{% url excluir_url objeto.pk %}">{% icone "trash-2" %}<span>Excluir</span></a>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

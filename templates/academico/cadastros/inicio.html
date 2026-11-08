@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Cadastros{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Cadastros</h1>
+    <p>{% if gerencia %}Cursos, turmas e disciplinas que você pode consultar e manter.{% else %}Cursos, turmas e disciplinas dos seus diários (somente consulta).{% endif %}</p>
+  </div>
+</div>
+<div class="grade-cartoes">
+  <a class="cartao cartao--link indicador" href="{% url 'cadastros:cursos' %}">
+    <span class="cartao__titulo">{% icone "graduation-cap" %}Cursos</span>
+    <span class="indicador__valor numero">{{ total_cursos }}</span>
+    <span class="indicador__rotulo">curso{{ total_cursos|pluralize }} {% if user.eh_admin %}cadastrado{{ total_cursos|pluralize }}{% else %}no seu escopo{% endif %}</span>
+  </a>
+  <a class="cartao cartao--link indicador" href="{% url 'cadastros:turmas' %}">
+    <span class="cartao__titulo">{% icone "users" %}Turmas</span>
+    <span class="indicador__valor numero">{{ total_turmas }}</span>
+    <span class="indicador__rotulo">turma{{ total_turmas|pluralize }}</span>
+  </a>
+  <a class="cartao cartao--link indicador" href="{% url 'cadastros:disciplinas' %}">
+    <span class="cartao__titulo">{% icone "book-open" %}Disciplinas</span>
+    <span class="indicador__valor numero">{{ total_disciplinas }}</span>
+    <span class="indicador__rotulo">disciplina{{ total_disciplinas|pluralize }}</span>
+  </a>
+</div>
+<p class="nota">Cursos, disciplinas e diários também são criados automaticamente quando um boletim do SUAP é importado, pelos códigos do SUAP e sem duplicar. A turma não vem no boletim e é vinculada aqui.</p>
+{% endblock %}

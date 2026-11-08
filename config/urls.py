@@ -10,5 +10,7 @@ urlpatterns = [
     path("painel/", paineis.painel, name="painel"),
     path("", include("apps.contas.urls")),
     path("usuarios/", include("apps.contas.urls_usuarios")),
+    path("diarios/", include("apps.academico.urls_diarios")),
+    path("cadastros/", include("apps.academico.urls_cadastros")),
     path("healthz", healthz, name="healthz"),
 ]

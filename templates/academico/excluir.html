@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Excluir{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url voltar.0 voltar.1 %}">{% icone "arrow-left" %}Voltar</a>
+<div class="cartao cartao--estreito">
+  <h1>Excluir {{ descricao }}?</h1>
+  <p>A exclusão fica registrada na auditoria. Só é possível excluir o que não está em uso: se houver vínculos, nada é apagado e você recebe o aviso.</p>
+  <form method="post" data-envio-unico>
+    {% csrf_token %}
+    <div class="acoes">
+      <button type="submit" class="botao botao--perigo" data-texto-enviando="Excluindo…">
+        <span class="botao__carregando" aria-hidden="true"></span>{% icone "trash-2" %}<span data-rotulo>Sim, excluir</span>
+      </button>
+      <a class="botao botao--secundario" href="{% url voltar.0 voltar.1 %}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

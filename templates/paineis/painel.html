@@ -9,6 +9,16 @@
   </div>
 </div>
 
+<section class="bloco" aria-labelledby="titulo-diarios">
+  <h2 id="titulo-diarios">{% if user.eh_professor %}Seus diários{% else %}Diários{% endif %}</h2>
+  <div class="grade-cartoes grade-cartoes--indicadores">
+    <a class="cartao cartao--link indicador" href="{% url 'diarios:lista' %}"><span class="indicador__valor numero">{{ resumo_diarios.total }}</span><span class="indicador__rotulo">diário{{ resumo_diarios.total|pluralize }}</span></a>
+    <a class="cartao cartao--link indicador" href="{% url 'diarios:lista' %}?situacao=com_notas"><span class="indicador__valor numero">{{ resumo_diarios.com_notas }}</span><span class="indicador__rotulo">com notas vigentes</span></a>
+    <a class="cartao cartao--link indicador" href="{% url 'diarios:lista' %}?situacao=aguardando"><span class="indicador__valor numero">{{ resumo_diarios.aguardando }}</span><span class="indicador__rotulo">aguardando confirmação</span></a>
+    <a class="cartao cartao--link indicador" href="{% url 'diarios:lista' %}?situacao=sem_turma"><span class="indicador__valor numero">{{ resumo_diarios.sem_turma }}</span><span class="indicador__rotulo">sem turma vinculada</span></a>
+  </div>
+</section>
+
 {% if resumo_usuarios %}
 <section class="bloco" aria-labelledby="titulo-usuarios">
   <h2 id="titulo-usuarios">Usuários</h2>
@@ -32,7 +42,7 @@
   {% elif user.eh_coordenador %}
   <p>Em breve você vai poder acompanhar os diários das turmas do seu curso, comparar turmas e bimestres e ver os alertas para o Conselho de Classe.</p>
   {% else %}
-  <p>Cadastre os professores e coordenadores. Cada um recebe um convite por e-mail para criar a própria senha. Os boletins e os painéis de turmas chegam nas próximas etapas.</p>
+  <p>Cadastre os professores e coordenadores (cada um recebe um convite por e-mail) e, em Cadastros, os cursos e seus coordenadores. A importação dos boletins em PDF e os painéis de turmas chegam nas próximas etapas.</p>
   {% endif %}
 </section>
 {% endblock %}

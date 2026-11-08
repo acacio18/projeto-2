@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}{{ curso.nome }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'cadastros:cursos' %}">{% icone "arrow-left" %}Cursos</a>
+<div class="cabecalho-pagina">
+  <div><h1>{{ curso.nome }}</h1><p>Código no SUAP: {{ curso.codigo }}</p></div>
+  {% if admin %}<a class="botao botao--secundario" href="{% url 'cadastros:curso_editar' curso.pk %}">{% icone "pencil" %}<span>Editar curso</span></a>{% endif %}
+</div>
+<div class="grade-cartoes grade-cartoes--indicadores">
+  <a class="cartao cartao--link indicador" href="{% url 'cadastros:turmas' %}?curso={{ curso.pk }}"><span class="indicador__valor numero">{{ turmas }}</span><span class="indicador__rotulo">turma{{ turmas|pluralize }}</span></a>
+  <a class="cartao cartao--link indicador" href="{% url 'cadastros:disciplinas' %}?curso={{ curso.pk }}"><span class="indicador__valor numero">{{ disciplinas }}</span><span class="indicador__rotulo">disciplina{{ disciplinas|pluralize }}</span></a>
+  <div class="cartao indicador"><span class="indicador__valor numero">{{ diarios }}</span><span class="indicador__rotulo">diário{{ diarios|pluralize }}</span></div>
+</div>
+<div class="duas-colunas duas-colunas--largo">
+  <section class="cartao" aria-labelledby="titulo-coordenacao">
+    <h2 class="cartao__titulo" id="titulo-coordenacao">{% icone "shield-check" %}Coordenação</h2>
+    {% if coordenadores %}
+    <ul class="lista-simples">
+      {% for coordenador in coordenadores %}
+      <li>
+        <span>{{ coordenador.nome }} <span class="nota-matricula">{{ coordenador.email }}</span></span>
+        {% if admin %}
+        <form method="post" action="{% url 'cadastros:coordenador_desvincular' curso.pk coordenador.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="botao botao--discreto" aria-label="Remover {{ coordenador.nome }} da coordenação">{% icone "circle-x" %}<span>Remover</span></button>
+        </form>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="nota">Nenhum coordenador vinculado.</p>
+    {% endif %}
+    {% if form_coordenador %}
+    <form method="post" action="{% url 'cadastros:coordenador_vincular' curso.pk %}" class="formulario formulario--linha" data-envio-unico>
+      {% csrf_token %}
+      {% include "parciais/campo.html" with campo=form_coordenador.usuario %}
+      <button type="submit" class="botao botao--secundario">{% icone "plus" %}<span>Vincular</span></button>
+    </form>
+    {% endif %}
+  </section>
+  {% if professores is not None %}
+  <section class="cartao" aria-labelledby="titulo-professores">
+    <h2 class="cartao__titulo" id="titulo-professores">{% icone "users" %}Professores do curso</h2>
+    {% if professores %}
+    <ul class="lista-simples">
+      {% for professor in professores %}<li><span>{{ professor.nome }} <span class="nota-matricula">{{ professor.email }}</span></span></li>{% endfor %}
+    </ul>
+    {% else %}
+    <p class="nota">Ainda não há diários com professor neste curso.</p>
+    {% endif %}
+    <p class="nota">São os professores responsáveis por algum diário do curso.</p>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

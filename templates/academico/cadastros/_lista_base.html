@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}{{ cadastro.plural|capfirst }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'cadastros:inicio' %}">{% icone "arrow-left" %}Cadastros</a>
+<div class="cabecalho-pagina">
+  <div><h1>{{ cadastro.plural|capfirst }}</h1><p>{% if pode_cadastrar %}Você pode cadastrar e alterar nos cursos que gerencia.{% else %}Somente consulta.{% endif %}</p></div>
+  {% if pode_cadastrar %}<a class="botao" href="{% url 'cadastros:'|add:cadastro.nome|add:'_nova' %}{% if filtro.cleaned_data.curso %}?curso={{ filtro.cleaned_data.curso.pk }}{% endif %}">{% icone "plus" %}<span>Nova {{ cadastro.nome }}</span></a>{% endif %}
+</div>
+<form method="get" class="filtros" role="search" aria-label="Filtrar {{ cadastro.plural }}">
+  {% for campo in filtro %}
+  <div class="campo">
+    <label class="campo__rotulo" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+    {{ campo }}
+  </div>
+  {% endfor %}
+  <div class="campo"><button type="submit" class="botao botao--secundario">{% icone "search" %}<span>Filtrar</span></button></div>
+</form>
+<div class="tabela-rolavel">
+  <table class="tabela tabela--cartoes">
+    <caption>{{ pagina.paginator.count }} {% if pagina.paginator.count == 1 %}{{ cadastro.nome }}{% else %}{{ cadastro.plural }}{% endif %}</caption>
+    <thead><tr>{% block colunas %}{% endblock %}<th scope="col"><span class="so-leitor">Ações</span></th></tr></thead>
+    <tbody>
+      {% for objeto in pagina %}
+      <tr>
+        {% block linha %}{% endblock %}
+        <td>{% if objeto.curso_id in gerenciaveis %}<a class="botao botao--discreto" href="{% url 'cadastros:'|add:cadastro.nome|add:'_editar' objeto.pk %}" aria-label="Editar {{ objeto }}">{% icone "pencil" %}<span>Editar</span></a>{% endif %}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="9" class="tabela__vazia">Nenhum registro encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "parciais/paginacao.html" %}
+{% endblock %}

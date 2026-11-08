@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Cursos{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'cadastros:inicio' %}">{% icone "arrow-left" %}Cadastros</a>
+<div class="cabecalho-pagina">
+  <div><h1>Cursos</h1><p>{% if pode_cadastrar %}Somente o administrador cadastra cursos e vincula coordenadores.{% else %}Cursos do seu escopo.{% endif %}</p></div>
+  {% if pode_cadastrar %}<a class="botao" href="{% url 'cadastros:curso_novo' %}">{% icone "plus" %}<span>Novo curso</span></a>{% endif %}
+</div>
+<div class="tabela-rolavel">
+  <table class="tabela tabela--cartoes">
+    <caption>{{ cursos|length }} curso{{ cursos|length|pluralize }}</caption>
+    <thead><tr><th scope="col">Curso</th><th scope="col">Código</th><th scope="col" class="numero">Turmas</th><th scope="col" class="numero">Disciplinas</th><th scope="col" class="numero">Diários</th></tr></thead>
+    <tbody>
+      {% for curso in cursos %}
+      <tr>
+        <td class="tabela__principal"><a href="{% url 'cadastros:curso' curso.pk %}">{{ curso.nome }}</a></td>
+        <td data-rotulo="Código" class="numero">{{ curso.codigo }}</td>
+        <td data-rotulo="Turmas" class="numero">{{ curso.n_turmas }}</td>
+        <td data-rotulo="Disciplinas" class="numero">{{ curso.n_disciplinas }}</td>
+        <td data-rotulo="Diários" class="numero">{{ curso.n_diarios }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="tabela__vazia">Nenhum curso no seu escopo ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

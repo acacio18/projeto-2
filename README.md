@@ -13,8 +13,9 @@ Sistema web de apoio a professores e coordenadores do **IFPB** (cursos técnicos
 Em desenvolvimento. Etapas concluídas:
 - **E0, fundação técnica:** ambiente, testes, scripts, boletins de teste e integração contínua.
 - **E1, acesso:** login pelo e-mail institucional, perfis Professor, Coordenador e Administrador, cadastro de usuários com convite por e-mail, bloqueio após 5 senhas erradas, auditoria e telas com tema claro e escuro.
+- **E2, dados e cadastros:** cursos com coordenadores, turmas, disciplinas e diários; notas guardadas em versões (nada é sobrescrito; uma versão vigente por diário); cada um vê só o seu escopo.
 
-Próxima: E2 (modelo de dados e cadastros).
+Próxima: E3 (importação dos boletins em PDF).
 
 ## Documentação
 
@@ -22,6 +23,7 @@ Próxima: E2 (modelo de dados e cadastros).
 - [Decisões sobre regras pendentes](docs/planejamento/14-decisoes-pendencias.md)
 - [Análise do boletim SUAP de exemplo](docs/planejamento/15-analise-boletim-exemplo.md); o PDF (nomes fictícios) está em [docs/referencias/boletins/](docs/referencias/boletins/)
 - [Diretrizes de UI/UX](docs/planejamento/16-diretrizes-ui-ux.md) e [design system](docs/design/design-system.md) (cores oficiais do IF, tipografia, componentes)
+- [Modelo de dados](docs/design/modelo-de-dados.md) (diagrama e garantias do banco)
 - [Evidências por etapa](docs/evidencias/)
 
 ## Stack prevista
@@ -48,6 +50,8 @@ powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # lint
 .\.venv\Scripts\python manage.py migrate            # cria as tabelas (rode de novo depois de cada atualização)
 .\.venv\Scripts\python manage.py createsuperuser    # primeiro administrador (e-mail @ifpb.edu.br)
 ```
+
+Para ver diários com notas antes da importação de PDF (E3), carregue o boletim de exemplo: `.\.venv\Scripts\python manage.py carregar_exemplo --email <e-mail de um professor>`.
 
 Depois, entre em http://127.0.0.1:8000 e cadastre os professores e coordenadores em **Usuários**. Cada um recebe um convite por e-mail para criar a própria senha. Em desenvolvimento, o e-mail aparece no terminal do `dev.ps1`.
 

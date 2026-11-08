@@ -81,3 +81,44 @@ def test_capturas(page, live_server):
     _foto(page, "09-alterar-senha", 1024, "escuro")
     page.goto(f"{base}/usuarios/999999/")
     _foto(page, "10-nao-encontrado", 768)
+
+    # --- E2: diários, versões e cadastros ---
+    from apps.academico.models import CoordenacaoCurso
+    from apps.importacao import servicos as versoes
+    from apps.importacao.management.commands.carregar_exemplo import ate_o_bimestre
+    from tests.apoio.boletins import carregar_gabarito
+    from tests.apoio.fabricas import DiarioFactory, DisciplinaFactory, TurmaFactory
+
+    professora = ProfessorFactory(nome="Cecília Benevides", email="cecilia.benevides@ifpb.edu.br")
+    dados = carregar_gabarito()
+    v1 = versoes.registrar_versao(
+        por=professora, dados=ate_o_bimestre(dados, 2), bimestre_corte=2, sha256="1" * 64
+    )
+    versoes.confirmar_versao(por=professora, importacao=v1)
+    v2 = versoes.registrar_versao(por=professora, dados=dados, bimestre_corte=4, sha256="2" * 64)
+    diario = v2.diario
+    coordenadora = CoordenadorFactory(nome="Nísia Floresta", email="nisia.floresta@ifpb.edu.br")
+    CoordenacaoCurso.objects.create(curso=diario.curso, usuario=coordenadora)
+    turma = TurmaFactory(curso=diario.curso, ano_letivo=2023, serie=3, identificador="3º A")
+    DiarioFactory(
+        disciplina=DisciplinaFactory(curso=diario.curso, nome="Banco de Dados"), turma=turma, ano_letivo=2023
+    )
+
+    page.goto(f"{base}/diarios/")
+    for largura, tema in [(1440, "claro"), (375, "claro")]:
+        _foto(page, "11-diarios", largura, tema)
+    page.goto(f"{base}/diarios/{diario.pk}/")
+    for largura, tema in [(1440, "claro"), (1440, "escuro"), (375, "claro")]:
+        _foto(page, "12-diario-aguardando-confirmacao", largura, tema)
+    versoes.confirmar_versao(por=professora, importacao=v2)
+    page.goto(f"{base}/diarios/{diario.pk}/?importacao={v1.pk}")
+    _foto(page, "13-diario-versao-antiga", 1440)
+    page.goto(f"{base}/cadastros/")
+    _foto(page, "14-cadastros", 1024)
+    page.goto(f"{base}/cadastros/cursos/{diario.curso_id}/")
+    for largura, tema in [(1440, "escuro"), (375, "claro")]:
+        _foto(page, "15-curso", largura, tema)
+    page.goto(f"{base}/cadastros/turmas/")
+    _foto(page, "16-turmas", 768)
+    page.goto(f"{base}/diarios/{diario.pk}/editar/")
+    _foto(page, "17-editar-diario", 1024)

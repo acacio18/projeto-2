@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1 está concluída**: design system aprovado, login, perfis, política de escopo, cadastro de usuários com convite por e-mail, auditoria e telas. A evidência está em `docs/evidencias/E1-infraestrutura-e-acesso.md`. A próxima é a **E2** (modelo de dados e cadastros), que depende de autorização. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1 está concluída**: design system aprovado, login, perfis, política de escopo, cadastro de usuários com convite por e-mail, auditoria e telas. A evidência está em `docs/evidencias/E1-infraestrutura-e-acesso.md`. A **E2 está concluída**: cadastros, versões das notas, escopo de diários e telas (evidência em `docs/evidencias/E2-modelo-de-dados-e-cadastros.md`). A próxima é a **E3** (importação de boletins), que depende de autorização. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -80,7 +80,20 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
   - `tests/paineis/test_contraste.py` lê os tokens do CSS e exige contraste WCAG nos dois temas;
   - `tests/e2e/test_acesso_navegador.py` cobre o fluxo do convite, as larguras de 375 a 1440 px, o menu, o tema, a senha e o teclado;
   - capturas para revisão visual: `$env:SUAP_CAPTURAS='pasta'; .\.venv\Scripts\python -m pytest tests/e2e/test_capturas_telas.py`.
-- **Fábricas de teste:** `tests/apoio/fabricas.py` (`ProfessorFactory`, `CoordenadorFactory`, `AdminFactory`; senha padrão `SENHA_PADRAO`).
+- **Dados (E2):**
+  - cadastros em `apps/academico` (Curso, CoordenacaoCurso, Turma, Disciplina, Diario, Estudante, MatriculaDiario);
+  - versões em `apps/importacao` (`Importacao`, uma vigente por diário);
+  - notas em `apps/notas` (ResultadoAluno, RegistroBimestral, ParametroRegra).
+  Diagrama e garantias em `docs/design/modelo-de-dados.md`.
+- **Versões:**
+  - grave sempre por `apps/importacao/servicos.py` (`registrar_versao`, que recebe o formato do gabarito, `"esquema": 1`; `confirmar_versao`; `definir_versao_vigente`; `descartar_versao`);
+  - consulte por `apps/notas/consultas.py`;
+  - versão confirmada e as notas dela são imutáveis, com gatilhos em `notas/0002`; correção = nova versão.
+- **Escopo:** `escopo.diarios_visiveis`, `cursos_visiveis`, `turmas_visiveis`, `disciplinas_visiveis` e `cursos_gerenciaveis`. Fora do escopo responde 404; visível mas sem permissão para alterar, 403.
+- **Parâmetros do Regimento:** `ParametroRegra.vigente(chave, em=data)`. Os valores iniciais estão na migração `notas/0003`.
+- **Testes transacionais:** os testes com `transaction=True` (navegador e migrações) rodam por último e apagam até os dados criados por migração. O `serialized_rollback` não funciona depois do Playwright, então não dependa de `ParametroRegra` nesses testes.
+- **Demonstração:** `.\.venv\Scripts\python manage.py carregar_exemplo --email <professor>` carrega o boletim de exemplo em 2 versões.
+- **Fábricas de teste:** `tests/apoio/fabricas.py` (`ProfessorFactory`, `CoordenadorFactory`, `AdminFactory`, `CursoFactory`, `TurmaFactory`, `DisciplinaFactory`, `DiarioFactory`; senha padrão `SENHA_PADRAO`).
 - **Boletins de teste:** o gabarito JSON do boletim de exemplo fica em `tests/fixtures/boletins/` (detalhes no `README.md` dessa pasta). As fixtures `boletim_exemplo`, `gabarito_exemplo` e `boletim_digitalizado("300dpi" | "150dpi" | "300dpi_inclinado" | "300dpi_girado90")` estão em `tests/conftest.py`. As versões digitalizadas (só imagem, para OCR) são geradas na hora por `tests/apoio/digitalizacao.py` e não são versionadas. O código de apoio aos testes fica em `tests/apoio/`.
 - **CI:** `.github/workflows/ci.yml` roda em cada push na `main` e em pull requests. Ele usa o runner `windows-2025`, instala as mesmas versões do ambiente local e executa `verificar-ambiente.ps1`, `makemigrations --check`, o pre-commit e o `test.ps1`. As versões instaladas:
   - Python 3.12.10;

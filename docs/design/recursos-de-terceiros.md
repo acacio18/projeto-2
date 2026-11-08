@@ -20,10 +20,17 @@ Baixados em 06/11/2026 do jsDelivr (espelho do npm), com versões fixas. Para at
 | Arquivo | SHA-256 |
 |---|---|
 | `arrow-left.svg` | `89312c8b3b40a29466e0d56c9c731546976e1c2a42363630c937c1674e1d92e8` |
+| `book-open.svg` | `7ab42efc5ec622983b2cbea4479e2c20c4592baaf810ceb117697ffd784713dd` |
+| `check.svg` | `17216b2602409241e83b5e1d8ad000c6ca7d37174ec1021a779aadbfd9ac326b` |
 | `circle-alert.svg` | `641a1c7284b6f30e12c89ddcad7395715dc31ac4a26741b33e68f2bc8713c3f8` |
 | `circle-check.svg` | `043790841c699a58858e2cb79d9474b48598d207a2e885ebd5d4e54f2b9a1908` |
+| `circle-x.svg` | `d92bb86e277e37682099dbdccef4a6b376f04d9dda75bd2abd755e93eca113a9` |
 | `eye-off.svg` | `80f7716c992c973002fc22ac8e5c472f767656cbff2728c05e21d5dc999779dc` |
 | `eye.svg` | `eb9c33c7ccaa970eac91a4d2267a617503930b55bc3914d488b6fdfaa569be93` |
+| `file-text.svg` | `2ea4874d9393c4c3a1e4a7f0d0f08d7f16b0f7f52bfafe5096f09d176c9c5df4` |
+| `folder.svg` | `ebfd13d74b82c3d64573818cc56f7efd7af5e7a2a2627cdca85b08768afa52ca` |
+| `graduation-cap.svg` | `400f5a0bcad6b7c7974f590137d824758f1262e7d92c568bde3ae3b48c871dc4` |
+| `history.svg` | `ec796c85d8606afc95995ccf7454eb6621a4f79e551fd6beb81696ced0f670e2` |
 | `info.svg` | `26c833cffd5b02337ec5b3089899e0242010a8b8a17585b5d52a80ca0d6f89c6` |
 | `key-round.svg` | `393894bd2a1c10a8a67e6ac010fab10ca715e314a0b9b9ac40916b3f253fd029` |
 | `layout-dashboard.svg` | `f7270ead45b34f3296065233b5abf136e9ecd4c3e40f644ae8fab94063665d52` |
@@ -34,10 +41,13 @@ Baixados em 06/11/2026 do jsDelivr (espelho do npm), com versões fixas. Para at
 | `menu.svg` | `7d6581f238d41f3269beab5af5a03be4dd47a579a52693dd88fba4c81a4e81fa` |
 | `moon.svg` | `5f2f11014bc4497c0858ad35137f989906039f01f30667755f69be5be631910b` |
 | `pencil.svg` | `aee2531d8270de4b0c2fcf6f1392e130cb975a3e887603f1f1af43fabda53b11` |
+| `plus.svg` | `6daef8329169d1c6216922e8e3e1587facb9729c1e8a9b939f2b3ec469025caf` |
+| `rotate-ccw.svg` | `4612947f52838b7f238cfa4586a6ed19df9d1a5ae602376c3b8d666c8c72c33a` |
 | `search.svg` | `2f6423a9b3149fb5157d2d45bd73b5c1d8bd98cac358189807c795dcc13ca2e9` |
 | `send.svg` | `0adb4b0657b9ae0b33f6df849cb7b65595fcb6f9bc471a8ba8c1e2681d46487e` |
 | `shield-check.svg` | `f1d08b8b59d2a6668ef6ef5e241d29dbc046b2a0fafcbf9dbb8658aadb6b2d43` |
 | `sun.svg` | `04cdfe15f35c2aeaf71f04a8aa3417e1d50c8c5ec507947cd0a9991e3ca02367` |
+| `trash-2.svg` | `d37c7796f030eb3f535f823b0493fe3f0daeebce629f5323c953c8bbac23d174` |
 | `triangle-alert.svg` | `288cefe2243c67b105533a91a176fe1accd9c296b0dcc71d33312adb58589366` |
 | `user-check.svg` | `af999425645bf9270b95d64347e3c5e368f3c08dfbc4237c32b5c33bbb135f63` |
 | `user-plus.svg` | `21231be6bcb12838cd0287b7672d7a0b5eaa4254e63a53c11cbfe3afba4a5188` |

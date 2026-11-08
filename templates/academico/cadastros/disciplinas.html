@@ -1,0 +1,10 @@
+{% extends "academico/cadastros/_lista_base.html" %}
+{% block colunas %}<th scope="col">Disciplina</th><th scope="col">Código</th><th scope="col">Curso</th><th scope="col" class="numero">Carga horária</th><th scope="col">Optativa</th><th scope="col" class="numero">Diários</th>{% endblock %}
+{% block linha %}
+        <td class="tabela__principal">{{ objeto.nome }}</td>
+        <td data-rotulo="Código">{{ objeto.codigo }}</td>
+        <td data-rotulo="Curso">{{ objeto.curso.nome }}</td>
+        <td data-rotulo="Carga horária" class="numero">{% if objeto.carga_horaria_horas %}{{ objeto.carga_horaria_horas }} h{% else %}—{% endif %}</td>
+        <td data-rotulo="Optativa">{% if objeto.optativa %}sim{% else %}não{% endif %}</td>
+        <td data-rotulo="Diários" class="numero">{{ objeto.n_diarios }}</td>
+{% endblock %}

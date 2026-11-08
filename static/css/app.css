@@ -877,3 +877,134 @@ table {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ---------- Navegação: "Alterar senha" vira botão com ícone no desktop e item do menu recolhido ---------- */
+.navegacao__link--recolhido {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .navegacao[data-aberta="true"] .navegacao__link--recolhido {
+    display: inline-flex;
+  }
+  .so-largo {
+    display: none !important;
+  }
+}
+
+/* ---------- E2: diários, versões e cadastros ---------- */
+.duas-colunas--largo {
+  max-width: none;
+  margin-bottom: var(--espaco-5);
+}
+.cartao--link {
+  color: var(--cor-texto);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color var(--transicao), background-color var(--transicao);
+}
+.cartao--link:hover {
+  border-color: var(--cor-marca);
+  background: var(--cor-superficie-alternativa);
+}
+.texto-perigo {
+  color: var(--cor-erro);
+}
+.campo input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--cor-primaria);
+  cursor: pointer;
+}
+.formulario--linha {
+  margin-top: var(--espaco-4);
+  gap: var(--espaco-3);
+}
+.lista-simples,
+.lista-versoes {
+  list-style: none;
+  margin: 0 0 var(--espaco-3);
+  padding: 0;
+}
+.lista-simples li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-2);
+  padding: var(--espaco-2) 0;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.lista-versoes__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-2);
+  padding: var(--espaco-2) var(--espaco-3);
+  border-left: 3px solid transparent;
+  border-radius: var(--raio);
+}
+.lista-versoes__item .nota {
+  margin: 0;
+  flex-basis: 100%;
+}
+.lista-versoes__item--atual {
+  border-left-color: var(--cor-marca);
+  background: var(--cor-superficie-alternativa);
+}
+.lista-versoes__item a {
+  font-weight: 700;
+}
+.nota-matricula {
+  display: block;
+  color: var(--cor-texto-secundario);
+  font-size: var(--texto-12);
+  font-weight: 400;
+}
+.tabela--notas th,
+.tabela--notas td {
+  padding: var(--espaco-2) var(--espaco-3);
+  white-space: nowrap;
+}
+.tabela--notas tbody th {
+  font-weight: 600;
+  white-space: normal;
+  min-width: 14rem;
+}
+.tabela--notas .centro {
+  text-align: center;
+}
+.tabela--notas .forte {
+  font-weight: 700;
+}
+.tabela--notas .faltas {
+  color: var(--cor-texto-secundario);
+}
+.tabela--notas abbr {
+  text-decoration: none;
+  cursor: help;
+}
+.linha-inativa th,
+.linha-inativa td {
+  color: var(--cor-texto-secundario);
+}
+/* Coluna do estudante fixa à esquerda ao rolar a tabela de notas para os lados. */
+.tabela--notas tbody th,
+.tabela--notas thead tr:first-child th:nth-child(2) {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--cor-superficie);
+  box-shadow: 1px 0 0 var(--cor-borda);
+}
+.tabela--notas thead tr:first-child th:nth-child(2) {
+  z-index: 2;
+  background: var(--cor-superficie-alternativa);
+}
+.tabela--notas tbody tr:hover th {
+  background: var(--cor-superficie-alternativa);
+}
+@media (max-width: 767px) {
+  .tabela--notas tbody th {
+    min-width: 9.5rem;
+  }
+}

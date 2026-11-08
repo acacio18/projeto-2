@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Diários{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Diários</h1>
+    <p>{% if user.eh_admin %}Todos os diários do campus.{% elif user.eh_coordenador %}Diários dos cursos que você coordena e os seus.{% else %}Os diários dos quais você é o professor responsável.{% endif %}</p>
+  </div>
+  {% if pode_cadastrar %}<a class="botao" href="{% url 'diarios:novo' %}">{% icone "plus" %}<span>Novo diário</span></a>{% endif %}
+</div>
+
+<form method="get" class="filtros" role="search" aria-label="Filtrar diários">
+  {% for campo in filtro %}
+  <div class="campo">
+    <label class="campo__rotulo" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+    {{ campo }}
+  </div>
+  {% endfor %}
+  <div class="campo">
+    <button type="submit" class="botao botao--secundario">{% icone "search" %}<span>Filtrar</span></button>
+  </div>
+</form>
+
+<div class="tabela-rolavel">
+  <table class="tabela tabela--cartoes">
+    <caption>{{ pagina.paginator.count }} diário{{ pagina.paginator.count|pluralize }}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Disciplina</th>
+        <th scope="col">Diário</th>
+        <th scope="col">Curso</th>
+        <th scope="col">Turma</th>
+        <th scope="col">Professor</th>
+        <th scope="col">Ano/período</th>
+        <th scope="col">Notas</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for diario in pagina %}
+      <tr>
+        <td class="tabela__principal"><a href="{% url 'diarios:detalhe' diario.pk %}">{{ diario.disciplina.nome }}</a></td>
+        <td data-rotulo="Diário" class="numero">{{ diario.codigo }}</td>
+        <td data-rotulo="Curso">{{ diario.curso.nome }}</td>
+        <td data-rotulo="Turma">{% if diario.turma %}{{ diario.turma.identificador }}{% else %}<span class="etiqueta etiqueta--neutra">sem turma</span>{% endif %}</td>
+        <td data-rotulo="Professor">{% if diario.professor %}{{ diario.professor.nome }}{% else %}<span class="etiqueta etiqueta--neutra">sem professor</span>{% endif %}</td>
+        <td data-rotulo="Ano/período" class="numero">{{ diario.ano_letivo }}/{{ diario.periodo_letivo }}</td>
+        <td data-rotulo="Notas">
+          {% if diario.aguardando %}<span class="etiqueta etiqueta--aviso">{% icone "file-text" %}aguardando confirmação</span>
+          {% elif diario.versao_vigente %}<span class="etiqueta etiqueta--sucesso">{% icone "check" %}versão {{ diario.versao_vigente }}</span>
+          {% else %}<span class="etiqueta etiqueta--neutra">sem notas</span>{% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="tabela__vazia">Nenhum diário encontrado. Os diários aparecem aqui quando um boletim do SUAP é importado{% if pode_cadastrar %} ou quando você cadastra um{% endif %}.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "parciais/paginacao.html" %}
+{% endblock %}

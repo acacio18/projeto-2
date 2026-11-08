@@ -1,0 +1,9 @@
+{% extends "academico/cadastros/_lista_base.html" %}
+{% block colunas %}<th scope="col">Turma</th><th scope="col">Curso</th><th scope="col" class="numero">Ano letivo</th><th scope="col" class="numero">Série</th><th scope="col" class="numero">Diários</th>{% endblock %}
+{% block linha %}
+        <td class="tabela__principal">{{ objeto.identificador }}</td>
+        <td data-rotulo="Curso">{{ objeto.curso.nome }}</td>
+        <td data-rotulo="Ano letivo" class="numero">{{ objeto.ano_letivo }}</td>
+        <td data-rotulo="Série" class="numero">{% if objeto.serie %}{{ objeto.serie }}º ano{% else %}—{% endif %}</td>
+        <td data-rotulo="Diários" class="numero">{{ objeto.n_diarios }}</td>
+{% endblock %}

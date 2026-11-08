@@ -7,10 +7,12 @@
     {% with secao=request.resolver_match.namespace|default:request.resolver_match.url_name %}
     <nav class="navegacao" id="navegacao-principal" aria-label="Navegação principal">
       <a class="navegacao__link" href="{% url 'painel' %}"{% if secao == 'painel' %} aria-current="page"{% endif %}>{% icone "layout-dashboard" %}Painel</a>
+      <a class="navegacao__link" href="{% url 'diarios:lista' %}"{% if secao == 'diarios' %} aria-current="page"{% endif %}>{% icone "book-open" %}Diários</a>
+      <a class="navegacao__link" href="{% url 'cadastros:inicio' %}"{% if secao == 'cadastros' %} aria-current="page"{% endif %}>{% icone "folder" %}Cadastros</a>
       {% if user.eh_admin %}
       <a class="navegacao__link" href="{% url 'usuarios:lista' %}"{% if secao == 'usuarios' %} aria-current="page"{% endif %}>{% icone "users" %}Usuários</a>
       {% endif %}
-      <a class="navegacao__link" href="{% url 'contas:alterar_senha' %}"{% if request.resolver_match.url_name == 'alterar_senha' %} aria-current="page"{% endif %}>{% icone "key-round" %}Alterar senha</a>
+      <a class="navegacao__link navegacao__link--recolhido" href="{% url 'contas:alterar_senha' %}"{% if request.resolver_match.url_name == 'alterar_senha' %} aria-current="page"{% endif %}>{% icone "key-round" %}Alterar senha</a>
     </nav>
     {% endwith %}
     <div class="cabecalho__acoes">
@@ -18,6 +20,7 @@
         <span>{{ user.nome }}</span>
         <span class="usuario-atual__perfil">{{ user.get_perfil_display }}</span>
       </div>
+      <a class="botao botao--discreto botao--icone so-largo" href="{% url 'contas:alterar_senha' %}" aria-label="Alterar senha" title="Alterar senha">{% icone "key-round" %}</a>
       <button type="button" class="botao botao--discreto botao--icone" data-alternar-tema aria-pressed="false" aria-label="Alternar tema claro ou escuro">
         {% icone "moon" %}
       </button>

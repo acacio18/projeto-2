@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}{{ diario.disciplina.nome }} ({{ diario.codigo }}){% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'diarios:lista' %}">{% icone "arrow-left" %}Diários</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ diario.disciplina.nome }}</h1>
+    <p>Diário {{ diario.codigo }} · {{ diario.disciplina.codigo }} · {{ diario.ano_letivo }}/{{ diario.periodo_letivo }}</p>
+  </div>
+  {% if pode_editar %}<a class="botao botao--secundario" href="{% url 'diarios:editar' diario.pk %}">{% icone "pencil" %}<span>Editar diário</span></a>{% endif %}
+</div>
+
+<div class="duas-colunas duas-colunas--largo">
+  <section class="cartao" aria-labelledby="titulo-dados">
+    <h2 class="cartao__titulo" id="titulo-dados">{% icone "book-open" %}Dados do diário</h2>
+    <dl class="detalhes">
+      <dt>Curso</dt><dd>{{ diario.curso.nome }}</dd>
+      <dt>Turma</dt><dd>{% if diario.turma %}{{ diario.turma.identificador }} ({{ diario.turma.ano_letivo }}){% else %}<span class="etiqueta etiqueta--neutra">sem turma</span> {% if pode_editar %}<a href="{% url 'diarios:editar' diario.pk %}">vincular</a>{% endif %}{% endif %}</dd>
+      <dt>Professor</dt><dd>{% if diario.professor %}{{ diario.professor.nome }}{% else %}<span class="etiqueta etiqueta--neutra">sem professor</span>{% endif %}</dd>
+      <dt>Carga horária</dt><dd class="numero">{% if diario.carga_horaria_horas %}{{ diario.carga_horaria_horas }} h{% else %}—{% endif %}{% if diario.aulas_previstas %} · {{ diario.aulas_previstas }} aulas previstas{% endif %}</dd>
+    </dl>
+  </section>
+
+  <section class="cartao" aria-labelledby="titulo-versoes">
+    <h2 class="cartao__titulo" id="titulo-versoes">{% icone "history" %}Versões das notas</h2>
+    {% if pendentes %}
+      {% for importacao in pendentes %}
+      <div class="alerta alerta--aviso" role="status">
+        {% icone "file-text" %}
+        <div>
+          <p><strong>Boletim aguardando confirmação</strong>, enviado por {{ importacao.enviada_por.nome }} em {{ importacao.criada_em|date:"d/m/Y H:i" }} (até o {{ importacao.bimestre_corte }}º bimestre).
+          {% if selecionada != importacao %}<a href="?importacao={{ importacao.pk }}">Conferir as notas</a>{% endif %}</p>
+          {% if pode_cuidar %}
+          <div class="acoes acoes--compactas">
+            <form method="post" action="{% url 'diarios:confirmar' diario.pk importacao.pk %}" data-envio-unico>
+              {% csrf_token %}
+              <button type="submit" class="botao" data-texto-enviando="Confirmando…"><span class="botao__carregando" aria-hidden="true"></span>{% icone "check" %}<span data-rotulo>Confirmar notas</span></button>
+            </form>
+            <form method="post" action="{% url 'diarios:descartar' diario.pk importacao.pk %}" data-envio-unico>
+              {% csrf_token %}
+              <button type="submit" class="botao botao--secundario">{% icone "circle-x" %}<span>Descartar</span></button>
+            </form>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+    {% if confirmadas %}
+    <ul class="lista-versoes">
+      {% for versao in confirmadas %}
+      <li class="lista-versoes__item{% if versao == selecionada %} lista-versoes__item--atual{% endif %}">
+        <a href="?importacao={{ versao.pk }}"{% if versao == selecionada %} aria-current="true"{% endif %}>Versão {{ versao.numero_versao }}</a>
+        {% if versao.vigente %}<span class="etiqueta etiqueta--sucesso">{% icone "check" %}vigente</span>{% endif %}
+        <span class="nota">confirmada por {{ versao.confirmada_por.nome }} em {{ versao.confirmada_em|date:"d/m/Y H:i" }} · até o {{ versao.bimestre_corte }}º bimestre</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% elif not pendentes %}
+    <p class="nota">Ainda não há notas. Elas chegam quando um boletim do SUAP deste diário é importado (próxima etapa do sistema).</p>
+    {% endif %}
+  </section>
+</div>
+
+{% if selecionada %}
+<section class="bloco" aria-labelledby="titulo-notas">
+  <div class="cabecalho-pagina">
+    <div>
+      <h2 id="titulo-notas">
+        {% if selecionada.numero_versao %}Notas da versão {{ selecionada.numero_versao }}{% else %}Notas aguardando confirmação{% endif %}
+        {% if selecionada.vigente %}<span class="etiqueta etiqueta--sucesso">{% icone "check" %}vigente</span>{% endif %}
+      </h2>
+      <p>Valores do boletim do SUAP, que são os oficiais. “–” é nota ausente, não zero.{% if selecionada.aulas_ministradas %} Aulas ministradas: {{ selecionada.aulas_ministradas }}.{% endif %}</p>
+    </div>
+    {% if pode_cuidar and selecionada.numero_versao and not selecionada.vigente %}
+    <form method="post" action="{% url 'diarios:tornar_vigente' diario.pk selecionada.pk %}" data-envio-unico>
+      {% csrf_token %}
+      <button type="submit" class="botao botao--secundario">{% icone "rotate-ccw" %}<span>Tornar esta versão a vigente</span></button>
+    </form>
+    {% endif %}
+  </div>
+  <div class="tabela-rolavel">
+    <table class="tabela tabela--notas">
+      <caption class="so-leitor">Notas e faltas por bimestre, médias e frequência de cada estudante</caption>
+      <thead>
+        <tr>
+          <th scope="col" rowspan="2" class="numero">#</th>
+          <th scope="col" rowspan="2">Estudante</th>
+          <th scope="col" rowspan="2">Situação</th>
+          {% for b in "1234" %}<th scope="colgroup" colspan="2" class="centro">{{ b }}º bim.</th>{% endfor %}
+          <th scope="col" rowspan="2" class="numero"><abbr title="Média da disciplina">MD</abbr></th>
+          <th scope="colgroup" colspan="2" class="centro"><abbr title="Avaliação final">AF</abbr></th>
+          <th scope="col" rowspan="2" class="numero"><abbr title="Média final da disciplina">MFD</abbr></th>
+          <th scope="col" rowspan="2" class="numero">Faltas</th>
+          <th scope="col" rowspan="2" class="numero">Freq.</th>
+        </tr>
+        <tr>
+          {% for b in "1234" %}<th scope="col" class="numero"><abbr title="Nota">N</abbr></th><th scope="col" class="numero"><abbr title="Faltas">F</abbr></th>{% endfor %}
+          <th scope="col" class="numero"><abbr title="Nota">N</abbr></th><th scope="col" class="numero"><abbr title="Faltas">F</abbr></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for linha in linhas %}
+        <tr{% if linha.cancelado %} class="linha-inativa"{% endif %}>
+          <td class="numero">{{ linha.ordem }}</td>
+          <th scope="row">{{ linha.nome_no_boletim }}<span class="nota-matricula">{{ linha.matricula.estudante.matricula }}</span></th>
+          <td>{% if linha.cancelado %}<span class="etiqueta etiqueta--neutra">{% icone "circle-x" %}{{ linha.situacao }}</span>{% else %}{{ linha.situacao }}{% endif %}</td>
+          {% for b in linha.bimestres.all %}
+          <td class="numero">{% if b.nota is None %}–{% else %}{{ b.nota|floatformat:"-2" }}{% endif %}</td>
+          <td class="numero faltas">{{ b.faltas }}</td>
+          {% endfor %}
+          <td class="numero forte">{% if linha.media_disciplina is None %}–{% else %}{{ linha.media_disciplina|floatformat:"-2" }}{% endif %}</td>
+          <td class="numero">{% if linha.nota_avaliacao_final is None %}–{% else %}{{ linha.nota_avaliacao_final|floatformat:"-2" }}{% endif %}</td>
+          <td class="numero faltas">{{ linha.faltas_avaliacao_final }}</td>
+          <td class="numero forte">{% if linha.media_final is not None %}{{ linha.media_final|floatformat:"-2" }}{% elif linha.conceito %}{{ linha.conceito }}{% else %}–{% endif %}</td>
+          <td class="numero">{{ linha.total_faltas }}</td>
+          <td class="numero">{% if linha.frequencia_percentual is None %}–{% else %}{{ linha.frequencia_percentual|floatformat:"-2" }}%{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
