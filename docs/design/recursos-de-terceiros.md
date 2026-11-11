@@ -28,6 +28,7 @@ Baixados em 06/11/2026 do jsDelivr (espelho do npm), com versões fixas. Para at
 | `eye-off.svg` | `80f7716c992c973002fc22ac8e5c472f767656cbff2728c05e21d5dc999779dc` |
 | `eye.svg` | `eb9c33c7ccaa970eac91a4d2267a617503930b55bc3914d488b6fdfaa569be93` |
 | `file-text.svg` | `2ea4874d9393c4c3a1e4a7f0d0f08d7f16b0f7f52bfafe5096f09d176c9c5df4` |
+| `file-up.svg` | `28e74f18059e1b9663190f1aadca7853787b64e9a54b49cd8adf798e6c674227` |
 | `folder.svg` | `ebfd13d74b82c3d64573818cc56f7efd7af5e7a2a2627cdca85b08768afa52ca` |
 | `graduation-cap.svg` | `400f5a0bcad6b7c7974f590137d824758f1262e7d92c568bde3ae3b48c871dc4` |
 | `history.svg` | `ec796c85d8606afc95995ccf7454eb6621a4f79e551fd6beb81696ced0f670e2` |
@@ -49,6 +50,7 @@ Baixados em 06/11/2026 do jsDelivr (espelho do npm), com versões fixas. Para at
 | `sun.svg` | `04cdfe15f35c2aeaf71f04a8aa3417e1d50c8c5ec507947cd0a9991e3ca02367` |
 | `trash-2.svg` | `d37c7796f030eb3f535f823b0493fe3f0daeebce629f5323c953c8bbac23d174` |
 | `triangle-alert.svg` | `288cefe2243c67b105533a91a176fe1accd9c296b0dcc71d33312adb58589366` |
+| `upload.svg` | `2cfa27c53698a1efbeae0296f628ffa9df3dd9b422941514962009c9ebb12800` |
 | `user-check.svg` | `af999425645bf9270b95d64347e3c5e368f3c08dfbc4237c32b5c33bbb135f63` |
 | `user-plus.svg` | `21231be6bcb12838cd0287b7672d7a0b5eaa4254e63a53c11cbfe3afba4a5188` |
 | `user-x.svg` | `bd8a513c0bef199f74204d59a4c6faa5c115f253bad17a4add769a12152af326` |

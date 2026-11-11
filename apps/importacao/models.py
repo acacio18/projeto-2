@@ -11,6 +11,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 
 class VersaoImutavelError(Exception):
@@ -37,6 +38,28 @@ def caminho_do_arquivo(instancia, nome_original):
     return f"boletins/{uuid.uuid4().hex}.pdf"
 
 
+class LoteImportacao(models.Model):
+    """Um envio de um ou mais boletins (vários PDFs ou um ZIP) — ID 18. Cada arquivo é independente."""
+
+    enviado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="lotes")
+    criado_em = models.DateTimeField("enviado em", auto_now_add=True)
+    bimestre_corte = models.PositiveSmallIntegerField("bimestre informado")
+    ignorados = models.JSONField(
+        "arquivos ignorados",
+        default=list,
+        blank=True,
+        help_text="Arquivos do envio que não eram PDF válidos.",
+    )
+
+    class Meta:
+        verbose_name = "lote de importação"
+        verbose_name_plural = "lotes de importação"
+        ordering = ["-criado_em"]
+
+    def __str__(self):
+        return f"Envio de {timezone.localtime(self.criado_em):%d/%m/%Y %H:%M}"
+
+
 # Campos que não mudam depois da confirmação (só "vigente" pode mudar).
 CAMPOS_CONGELADOS = [
     "diario_id",
@@ -54,6 +77,9 @@ CAMPOS_CONGELADOS = [
 
 
 class Importacao(models.Model):
+    lote = models.ForeignKey(
+        LoteImportacao, on_delete=models.PROTECT, related_name="importacoes", null=True, blank=True
+    )
     diario = models.ForeignKey(
         "academico.Diario", on_delete=models.PROTECT, related_name="importacoes", null=True, blank=True
     )

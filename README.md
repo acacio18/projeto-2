@@ -14,8 +14,13 @@ Em desenvolvimento. Etapas concluídas:
 - **E0, fundação técnica:** ambiente, testes, scripts, boletins de teste e integração contínua.
 - **E1, acesso:** login pelo e-mail institucional, perfis Professor, Coordenador e Administrador, cadastro de usuários com convite por e-mail, bloqueio após 5 senhas erradas, auditoria e telas com tema claro e escuro.
 - **E2, dados e cadastros:** cursos com coordenadores, turmas, disciplinas e diários; notas guardadas em versões (nada é sobrescrito; uma versão vigente por diário); cada um vê só o seu escopo.
+- **E3, importação de boletins:**
+  - envio de um ou vários PDFs do SUAP, ou de um ZIP;
+  - leitura pelo texto do PDF e, se o PDF for escaneado, por OCR;
+  - conferência das contas e confirmação pelo professor antes de as notas valerem.
+  - O aceite final depende de boletins reais (PRC-08).
 
-Próxima: E3 (importação dos boletins em PDF).
+Próxima: E4 (regras do Regimento e estatísticas).
 
 ## Documentação
 
@@ -51,7 +56,7 @@ powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # lint
 .\.venv\Scripts\python manage.py createsuperuser    # primeiro administrador (e-mail @ifpb.edu.br)
 ```
 
-Para ver diários com notas antes da importação de PDF (E3), carregue o boletim de exemplo: `.\.venv\Scripts\python manage.py carregar_exemplo --email <e-mail de um professor>`.
+Para importar um boletim, entre como professor e use **Importações → Enviar boletins**. O `dev.ps1` sobe junto a fila de tarefas (`manage.py qcluster`), que faz a leitura; sem ela, o envio fica em "Recebida". Para ter dados sem enviar PDF, carregue o boletim de exemplo: `.\.venv\Scripts\python manage.py carregar_exemplo --email <e-mail de um professor>`.
 
 Depois, entre em http://127.0.0.1:8000 e cadastre os professores e coordenadores em **Usuários**. Cada um recebe um convite por e-mail para criar a própria senha. Em desenvolvimento, o e-mail aparece no terminal do `dev.ps1`.
 

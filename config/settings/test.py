@@ -6,3 +6,6 @@ DEBUG = False
 
 # Hash rápido: os testes criam muitos usuários e não precisam de hash forte.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# A fila roda as tarefas na hora, no mesmo processo (sem qcluster).
+Q_CLUSTER = {**Q_CLUSTER, "sync": True}  # noqa: F405

@@ -10,7 +10,10 @@
 </div>
 
 <section class="bloco" aria-labelledby="titulo-diarios">
-  <h2 id="titulo-diarios">{% if user.eh_professor %}Seus diários{% else %}Diários{% endif %}</h2>
+  <div class="cabecalho-pagina cabecalho-pagina--secao">
+    <h2 id="titulo-diarios">{% if user.eh_professor %}Seus diários{% else %}Diários{% endif %}</h2>
+    <a class="botao" href="{% url 'importacoes:enviar' %}">{% icone "upload" %}<span>Enviar boletins</span></a>
+  </div>
   <div class="grade-cartoes grade-cartoes--indicadores">
     <a class="cartao cartao--link indicador" href="{% url 'diarios:lista' %}"><span class="indicador__valor numero">{{ resumo_diarios.total }}</span><span class="indicador__rotulo">diário{{ resumo_diarios.total|pluralize }}</span></a>
     <a class="cartao cartao--link indicador" href="{% url 'diarios:lista' %}?situacao=com_notas"><span class="indicador__valor numero">{{ resumo_diarios.com_notas }}</span><span class="indicador__rotulo">com notas vigentes</span></a>
@@ -38,11 +41,11 @@
 <section class="cartao" aria-labelledby="titulo-proximos">
   <h2 class="cartao__titulo" id="titulo-proximos">{% icone "info" %}O que vem a seguir</h2>
   {% if user.eh_professor %}
-  <p>Em breve você vai poder enviar o PDF do boletim de cada diário e acompanhar estatísticas, alunos que precisam de atenção e a evolução da turma.</p>
+  <p>Envie o PDF do boletim de cada diário em “Enviar boletins”. Em breve: estatísticas, alunos que precisam de atenção e a evolução da turma.</p>
   {% elif user.eh_coordenador %}
   <p>Em breve você vai poder acompanhar os diários das turmas do seu curso, comparar turmas e bimestres e ver os alertas para o Conselho de Classe.</p>
   {% else %}
-  <p>Cadastre os professores e coordenadores (cada um recebe um convite por e-mail) e, em Cadastros, os cursos e seus coordenadores. A importação dos boletins em PDF e os painéis de turmas chegam nas próximas etapas.</p>
+  <p>Cadastre os professores e coordenadores (cada um recebe um convite por e-mail) e, em Cadastros, os cursos e seus coordenadores. Os painéis de turmas e as estatísticas chegam nas próximas etapas.</p>
   {% endif %}
 </section>
 {% endblock %}

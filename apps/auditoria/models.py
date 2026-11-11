@@ -33,6 +33,8 @@ class TipoEvento(models.TextChoices):
     CADASTRO_EXCLUIDO = "CADASTRO_EXCLUIDO", "Cadastro excluído"
     COORDENACAO_ADICIONADA = "COORDENACAO_ADICIONADA", "Coordenador vinculado a curso"
     COORDENACAO_REMOVIDA = "COORDENACAO_REMOVIDA", "Coordenador desvinculado de curso"
+    IMPORTACAO_RECEBIDA = "IMPORTACAO_RECEBIDA", "Boletim em PDF recebido"
+    IMPORTACAO_FALHOU = "IMPORTACAO_FALHOU", "Leitura de boletim falhou"
     VERSAO_REGISTRADA = "VERSAO_REGISTRADA", "Notas de um boletim registradas (aguardando confirmação)"
     VERSAO_CONFIRMADA = "VERSAO_CONFIRMADA", "Versão de notas confirmada"
     VERSAO_VIGENTE_ALTERADA = "VERSAO_VIGENTE_ALTERADA", "Versão vigente de um diário trocada"

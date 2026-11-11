@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load interface %}
+{% block titulo %}Enviar boletins{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Enviar boletins</h1>
+    <p>O sistema lê o PDF, confere as contas e mostra as notas para você confirmar. Nada vale antes da sua confirmação.</p>
+  </div>
+  <a class="botao botao--secundario" href="{% url 'importacoes:lista' %}">{% icone "history" %}<span>Envios anteriores</span></a>
+</div>
+<div class="duas-colunas duas-colunas--largo">
+  <section class="cartao" aria-labelledby="titulo-envio">
+    <h2 class="cartao__titulo" id="titulo-envio">{% icone "file-up" %}Arquivos</h2>
+    {% include "parciais/erros_formulario.html" %}
+    <form method="post" enctype="multipart/form-data" class="formulario" data-envio-unico novalidate>
+      {% csrf_token %}
+      {% include "parciais/campo.html" with campo=form.arquivos %}
+      {% include "parciais/campo.html" with campo=form.bimestre_corte %}
+      <div class="acoes acoes--compactas">
+        <button type="submit" class="botao" data-texto-enviando="Enviando…">
+          <span class="botao__carregando" aria-hidden="true"></span>{% icone "upload" %}<span data-rotulo>Enviar e ler</span>
+        </button>
+      </div>
+    </form>
+  </section>
+  <section class="cartao" aria-labelledby="titulo-como">
+    <h2 class="cartao__titulo" id="titulo-como">{% icone "info" %}Como funciona</h2>
+    <ol class="passos">
+      <li>No SUAP, exporte o <strong>“Boletim de Notas do Diário”</strong> em PDF. Prefira o PDF original: ele é lido na hora e sem erro.</li>
+      <li>PDF escaneado (foto ou digitalização) também funciona, por leitura óptica (OCR). Leva cerca de 20 segundos e pode errar algum número: o sistema avisa o que não fecha nas contas.</li>
+      <li>Depois da leitura, confira as notas e confirme. Um envio novo do mesmo diário vira uma nova versão; as anteriores ficam guardadas.</li>
+    </ol>
+  </section>
+</div>
+{% endblock %}

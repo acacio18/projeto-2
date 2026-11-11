@@ -9,7 +9,7 @@
     se alguma falhou.
 
 .PARAMETER Rapido
-    Pula os testes de navegador (marcador e2e) e o pip-audit, que consulta a internet.
+    Pula os testes de navegador (e2e), os de OCR (lentos) e o pip-audit, que consulta a internet.
 
 .EXAMPLE
     powershell -ExecutionPolicy Bypass -File scripts\test.ps1
@@ -23,7 +23,7 @@ param(
 
 $Raiz = Split-Path -Parent $PSScriptRoot
 $Bin = Join-Path $Raiz '.venv\Scripts'
-$argsPytest = if ($Rapido) { @('-m', 'not e2e') } else { @() }
+$argsPytest = if ($Rapido) { @('-m', 'not e2e and not ocr and not fila') } else { @() }
 
 $etapas = @(
     @{ Nome = 'Lint (ruff check)'; Comando = { & "$Bin\ruff.exe" check . } },

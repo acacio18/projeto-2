@@ -1,0 +1,10 @@
+{% load interface %}{% if relatorio.problemas %}
+<ul class="lista-problemas">
+  {% for problema in relatorio.problemas %}
+  <li class="lista-problemas__item lista-problemas__item--{{ problema.nivel }}">
+    {% if problema.nivel == "erro" %}{% icone "circle-alert" %}<span class="so-leitor">Erro:</span>{% else %}{% icone "triangle-alert" %}<span class="so-leitor">Aviso:</span>{% endif %}
+    <span>{% if problema.aluno %}<strong>{{ problema.aluno }}:</strong> {% endif %}{{ problema.mensagem }}</span>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

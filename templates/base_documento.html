@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <script src="{% static 'js/tema.js' %}"></script>
   <script src="{% static 'js/app.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
 </head>
 <body>
   <a class="pular-para-conteudo" href="#conteudo">Pular para o conteúdo</a>

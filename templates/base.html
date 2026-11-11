@@ -8,6 +8,7 @@
     <nav class="navegacao" id="navegacao-principal" aria-label="Navegação principal">
       <a class="navegacao__link" href="{% url 'painel' %}"{% if secao == 'painel' %} aria-current="page"{% endif %}>{% icone "layout-dashboard" %}Painel</a>
       <a class="navegacao__link" href="{% url 'diarios:lista' %}"{% if secao == 'diarios' %} aria-current="page"{% endif %}>{% icone "book-open" %}Diários</a>
+      <a class="navegacao__link" href="{% url 'importacoes:lista' %}"{% if secao == 'importacoes' %} aria-current="page"{% endif %}>{% icone "upload" %}Importações</a>
       <a class="navegacao__link" href="{% url 'cadastros:inicio' %}"{% if secao == 'cadastros' %} aria-current="page"{% endif %}>{% icone "folder" %}Cadastros</a>
       {% if user.eh_admin %}
       <a class="navegacao__link" href="{% url 'usuarios:lista' %}"{% if secao == 'usuarios' %} aria-current="page"{% endif %}>{% icone "users" %}Usuários</a>

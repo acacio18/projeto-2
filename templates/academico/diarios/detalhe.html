@@ -8,7 +8,10 @@
     <h1>{{ diario.disciplina.nome }}</h1>
     <p>Diário {{ diario.codigo }} · {{ diario.disciplina.codigo }} · {{ diario.ano_letivo }}/{{ diario.periodo_letivo }}</p>
   </div>
-  {% if pode_editar %}<a class="botao botao--secundario" href="{% url 'diarios:editar' diario.pk %}">{% icone "pencil" %}<span>Editar diário</span></a>{% endif %}
+  <div class="acoes acoes--compactas">
+    {% if pode_cuidar %}<a class="botao" href="{% url 'importacoes:enviar' %}">{% icone "upload" %}<span>Enviar boletim</span></a>{% endif %}
+    {% if pode_editar %}<a class="botao botao--secundario" href="{% url 'diarios:editar' diario.pk %}">{% icone "pencil" %}<span>Editar diário</span></a>{% endif %}
+  </div>
 </div>
 
 <div class="duas-colunas duas-colunas--largo">
@@ -31,6 +34,7 @@
         <div>
           <p><strong>Boletim aguardando confirmação</strong>, enviado por {{ importacao.enviada_por.nome }} em {{ importacao.criada_em|date:"d/m/Y H:i" }} (até o {{ importacao.bimestre_corte }}º bimestre).
           {% if selecionada != importacao %}<a href="?importacao={{ importacao.pk }}">Conferir as notas</a>{% endif %}</p>
+          {% with relatorio=importacao.relatorio_validacao %}{% if relatorio %}{% include "importacao/_relatorio.html" %}{% endif %}{% endwith %}
           {% if pode_cuidar %}
           <div class="acoes acoes--compactas">
             <form method="post" action="{% url 'diarios:confirmar' diario.pk importacao.pk %}" data-envio-unico>
@@ -58,7 +62,7 @@
       {% endfor %}
     </ul>
     {% elif not pendentes %}
-    <p class="nota">Ainda não há notas. Elas chegam quando um boletim do SUAP deste diário é importado (próxima etapa do sistema).</p>
+    <p class="nota">Ainda não há notas. Elas chegam quando um boletim do SUAP deste diário é enviado em “Enviar boletim”.</p>
     {% endif %}
   </section>
 </div>

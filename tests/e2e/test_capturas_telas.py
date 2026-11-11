@@ -122,3 +122,69 @@ def test_capturas(page, live_server):
     _foto(page, "16-turmas", 768)
     page.goto(f"{base}/diarios/{diario.pk}/editar/")
     _foto(page, "17-editar-diario", 1024)
+
+    # --- E3: envio, lote, falha, conferência com o relatório da leitura ---
+    import tempfile
+
+    from apps.importacao.models import Importacao, StatusImportacao
+    from tests.apoio import digitalizacao
+    from tests.apoio.boletins import BOLETIM_EXEMPLO
+
+    escaneado = digitalizacao.gerar(
+        BOLETIM_EXEMPLO,
+        Path(tempfile.mkdtemp()) / "boletim-escaneado.pdf",
+        digitalizacao.VARIANTES["300dpi_inclinado"],
+    )
+    page.context.clear_cookies()
+    page.goto(f"{base}/entrar/")
+    page.get_by_label("E-mail institucional").fill("cecilia.benevides@ifpb.edu.br")
+    page.get_by_label("Senha", exact=True).fill(SENHA_PADRAO)
+    page.get_by_role("button", name="Entrar").click()
+    page.goto(f"{base}/importacoes/enviar/")
+    for largura, tema in [(1440, "claro"), (1440, "escuro"), (375, "claro")]:
+        _foto(page, "18-enviar", largura, tema)
+
+    page.set_viewport_size({"width": 1440, "height": 900})
+    page.get_by_label("Boletins do SUAP (PDF)").set_input_files(
+        [
+            {"name": c.name, "mimeType": "application/pdf", "buffer": c.read_bytes()}
+            for c in (BOLETIM_EXEMPLO, escaneado)
+        ]
+        + [
+            {"name": "boletim-corrompido.pdf", "mimeType": "application/pdf", "buffer": b"%PDF-1.4 lixo"},
+            {"name": "foto-do-boletim.jpg", "mimeType": "image/jpeg", "buffer": b"\xff\xd8\xff"},
+        ]
+    )
+    page.get_by_label("Até qual bimestre as notas estão fechadas?").select_option("4")
+    page.set_default_timeout(180_000)  # a fila roda na hora: o OCR do escaneado leva uns 20 s
+    page.get_by_role("button", name="Enviar e ler").click()
+    page.get_by_text("Arquivos não recebidos").wait_for()
+    page.set_default_timeout(30_000)
+    for largura, tema in [(1440, "claro"), (1440, "escuro"), (375, "claro")]:
+        _foto(page, "19-lote", largura, tema)
+
+    falhou = Importacao.objects.get(status=StatusImportacao.FALHOU)
+    page.goto(f"{base}/importacoes/{falhou.pk}/")
+    for largura, tema in [(1024, "claro"), (375, "escuro")]:
+        _foto(page, "20-importacao-falhou", largura, tema)
+
+    por_ocr = Importacao.objects.get(nome_arquivo_original="boletim-escaneado.pdf")
+    page.goto(f"{base}/importacoes/{por_ocr.pk}/")  # leva à conferência no diário
+    for largura, tema in [(1440, "claro"), (1440, "escuro"), (375, "claro")]:
+        _foto(page, "21-conferencia-ocr", largura, tema)
+    por_texto = Importacao.objects.get(nome_arquivo_original=BOLETIM_EXEMPLO.name)
+    page.goto(f"{base}/importacoes/{por_texto.pk}/")
+    _foto(page, "22-conferencia-texto", 1024)
+
+    page.goto(f"{base}/importacoes/")
+    for largura, tema in [(1440, "claro"), (375, "claro")]:
+        _foto(page, "23-importacoes", largura, tema)
+
+    lendo = Importacao.objects.create(
+        enviada_por=Importacao.objects.first().enviada_por,
+        nome_arquivo_original="boletim-3A-matematica.pdf",
+        bimestre_corte=2,
+        sha256="3" * 64,
+    )
+    page.goto(f"{base}/importacoes/{lendo.pk}/")
+    _foto(page, "24-lendo", 768)

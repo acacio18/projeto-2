@@ -23,6 +23,8 @@ python_files = ["test_*.py"]
 addopts = "--strict-markers --strict-config -ra"
 markers = [
     "e2e: testes de ponta a ponta no navegador (Playwright)",
+    "ocr: leitura de boletins escaneados pelo Tesseract (lenta, cerca de 20 s por boletim)",
+    "fila: sobe um qcluster de verdade em outro processo (Django-Q2 com broker ORM)",
 ]
 
 [tool.coverage.run]

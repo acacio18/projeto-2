@@ -84,20 +84,21 @@ def _diario_para(por, dados) -> Diario:
 
 
 @transaction.atomic
-def registrar_versao(
+def preencher_versao(
     *,
-    por,
+    importacao: Importacao,
     dados: dict,
-    bimestre_corte: int,
-    sha256: str,
     metodo=MetodoExtracao.TEXTO,
     versao_extrator: str = "",
-    nome_arquivo: str = "",
-    tamanho_bytes: int = 0,
-    arquivo=None,
+    relatorio: dict | None = None,
     request=None,
 ) -> Importacao:
-    """Grava as notas lidas de um boletim como uma versão aguardando a confirmação do professor."""
+    """Grava as notas lidas numa importação já criada; ela passa a aguardar a confirmação do professor.
+
+    Na importação de PDF (E3), a importação nasce no envio do arquivo e é preenchida pela tarefa da fila.
+    Curso, disciplina, diário e estudantes são encontrados pelos códigos do SUAP ou criados.
+    """
+    por = importacao.enviada_por
     if not escopo.esta_ativo(por):
         raise PermissionDenied
     if dados.get("esquema") != ESQUEMA_SUPORTADO:
@@ -106,7 +107,8 @@ def registrar_versao(
         )
     diario = _diario_para(por, dados)
     repetida = (
-        diario.importacoes.filter(sha256=sha256)
+        diario.importacoes.filter(sha256=importacao.sha256)
+        .exclude(pk=importacao.pk)
         .exclude(status__in=[StatusImportacao.DESCARTADA, StatusImportacao.FALHOU])
         .first()
     )
@@ -115,28 +117,20 @@ def registrar_versao(
             f"Este boletim já foi enviado para este diário ({repetida}). Nada foi duplicado.",
             code="duplicado",
         )
-    importacao = Importacao(
-        diario=diario,
-        status=StatusImportacao.AGUARDANDO_CONFIRMACAO,
-        bimestre_corte=bimestre_corte,
-        sha256=sha256,
-        metodo_extracao=metodo,
-        versao_extrator=versao_extrator,
-        nome_arquivo_original=nome_arquivo,
-        tamanho_bytes=tamanho_bytes,
-        aulas_ministradas=dados["aulas_ministradas"]["ministradas"],
-        cabecalho={
-            "curso": dados["curso"]["texto"],
-            "diario": dados["diario"]["texto"],
-            "periodo_letivo": dados["periodo_letivo"]["texto"],
-            "aulas_ministradas": dados["aulas_ministradas"]["texto"],
-            "professor_principal": dados.get("professor_principal", ""),
-            "emissao": dados.get("emissao", {}),
-        },
-        enviada_por=por,
-    )
-    if arquivo is not None:
-        importacao.arquivo = arquivo
+    importacao.diario = diario
+    importacao.status = StatusImportacao.AGUARDANDO_CONFIRMACAO
+    importacao.metodo_extracao = metodo
+    importacao.versao_extrator = versao_extrator
+    importacao.aulas_ministradas = dados["aulas_ministradas"]["ministradas"]
+    importacao.cabecalho = {
+        "curso": dados["curso"]["texto"],
+        "diario": dados["diario"]["texto"],
+        "periodo_letivo": dados["periodo_letivo"]["texto"],
+        "aulas_ministradas": dados["aulas_ministradas"]["texto"],
+        "professor_principal": dados.get("professor_principal", ""),
+        "emissao": dados.get("emissao", {}),
+    }
+    importacao.relatorio_validacao = relatorio or {}
     importacao.full_clean()
     importacao.save()
     for aluno in dados["alunos"]:
@@ -150,6 +144,45 @@ def registrar_versao(
         alunos=len(dados["alunos"]),
     )
     return importacao
+
+
+@transaction.atomic
+def registrar_versao(
+    *,
+    por,
+    dados: dict,
+    bimestre_corte: int,
+    sha256: str,
+    metodo=MetodoExtracao.TEXTO,
+    versao_extrator: str = "",
+    nome_arquivo: str = "",
+    tamanho_bytes: int = 0,
+    arquivo=None,
+    relatorio: dict | None = None,
+    request=None,
+) -> Importacao:
+    """Cria a importação e grava as notas de uma vez (dados já lidos; usado também na demonstração)."""
+    if not escopo.esta_ativo(por):
+        raise PermissionDenied
+    importacao = Importacao(
+        status=StatusImportacao.PROCESSANDO,
+        bimestre_corte=bimestre_corte,
+        sha256=sha256,
+        nome_arquivo_original=nome_arquivo,
+        tamanho_bytes=tamanho_bytes,
+        enviada_por=por,
+    )
+    if arquivo is not None:
+        importacao.arquivo = arquivo
+    importacao.save()
+    return preencher_versao(
+        importacao=importacao,
+        dados=dados,
+        metodo=metodo,
+        versao_extrator=versao_extrator,
+        relatorio=relatorio,
+        request=request,
+    )
 
 
 def _registrar_aluno(importacao, diario, aluno) -> None:

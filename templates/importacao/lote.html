@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load interface static %}
+{% block titulo %}Envio de boletins{% endblock %}
+{% block scripts %}{% if em_andamento %}<script src="{% static 'js/acompanhar.js' %}" defer></script>{% endif %}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'importacoes:lista' %}">{% icone "arrow-left" %}Envios</a>
+<div class="cabecalho-pagina">
+  <div><h1>{{ lote }}</h1><p>{{ importacoes|length }} boleti{{ importacoes|length|pluralize:"m,ns" }} até o {{ lote.bimestre_corte }}º bimestre. Cada arquivo é lido separadamente: um problema num deles não afeta os outros.</p></div>
+  <a class="botao" href="{% url 'importacoes:enviar' %}">{% icone "upload" %}<span>Enviar mais</span></a>
+</div>
+<div class="tabela-rolavel"{% if em_andamento %} data-acompanhar="{% url 'importacoes:lote_situacao' lote.pk %}"{% endif %} aria-live="polite">
+  <table class="tabela tabela--cartoes">
+    <caption class="so-leitor">Situação de cada boletim do envio</caption>
+    <thead><tr><th scope="col">Arquivo</th><th scope="col">Situação</th><th scope="col">Diário</th><th scope="col"><span class="so-leitor">Ações</span></th></tr></thead>
+    <tbody>
+      {% for importacao in importacoes %}
+      <tr>
+        <td class="tabela__principal">{{ importacao.nome_arquivo_original }}</td>
+        <td data-rotulo="Situação">{% include "importacao/_situacao.html" %}</td>
+        <td data-rotulo="Diário">{% if importacao.diario %}{{ importacao.diario.codigo }} – {{ importacao.diario.disciplina.nome }}{% else %}—{% endif %}</td>
+        <td><a class="botao botao--discreto" href="{% url 'importacoes:detalhe' importacao.pk %}">{% if importacao.status == "AGUARDANDO_CONFIRMACAO" %}{% icone "check" %}<span>Conferir e confirmar</span>{% else %}{% icone "file-text" %}<span>Ver</span>{% endif %}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if lote.ignorados %}
+<section class="cartao bloco-topo" aria-labelledby="titulo-ignorados">
+  <h2 class="cartao__titulo" id="titulo-ignorados">{% icone "triangle-alert" %}Arquivos não recebidos</h2>
+  <ul class="lista-simples">
+    {% for item in lote.ignorados %}<li><span><strong>{{ item.nome }}</strong>: {{ item.motivo }}{% if item.link %} (<a href="{{ item.link }}">ver o envio anterior</a>){% endif %}</span></li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

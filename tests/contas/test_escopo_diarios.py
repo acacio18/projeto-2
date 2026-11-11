@@ -105,3 +105,16 @@ def test_inativo_ve_nenhum_usuario(cenario):
     inativa.is_active = False
     assert not escopo.usuarios_visiveis(inativa).exists()
     assert not escopo.cursos_gerenciaveis(inativa).exists()
+
+
+def test_importacoes_visiveis_por_perfil(cenario):
+    from apps.importacao.models import Importacao
+
+    importacao = Importacao.objects.create(
+        diario=cenario["diario_beto"], bimestre_corte=1, sha256="a" * 64, enviada_por=cenario["beto"]
+    )
+    assert list(escopo.importacoes_visiveis(AdminFactory())) == [importacao]
+    assert list(escopo.importacoes_visiveis(cenario["beto"])) == [importacao]
+    assert not escopo.importacoes_visiveis(cenario["ana"]).exists()
+    cenario["beto"].is_active = False
+    assert not escopo.importacoes_visiveis(cenario["beto"]).exists()

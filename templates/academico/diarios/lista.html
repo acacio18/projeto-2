@@ -7,7 +7,10 @@
     <h1>Diários</h1>
     <p>{% if user.eh_admin %}Todos os diários do campus.{% elif user.eh_coordenador %}Diários dos cursos que você coordena e os seus.{% else %}Os diários dos quais você é o professor responsável.{% endif %}</p>
   </div>
-  {% if pode_cadastrar %}<a class="botao" href="{% url 'diarios:novo' %}">{% icone "plus" %}<span>Novo diário</span></a>{% endif %}
+  <div class="acoes acoes--compactas">
+    <a class="botao" href="{% url 'importacoes:enviar' %}">{% icone "upload" %}<span>Enviar boletins</span></a>
+    {% if pode_cadastrar %}<a class="botao botao--secundario" href="{% url 'diarios:novo' %}">{% icone "plus" %}<span>Novo diário</span></a>{% endif %}
+  </div>
 </div>
 
 <form method="get" class="filtros" role="search" aria-label="Filtrar diários">
@@ -52,7 +55,7 @@
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="7" class="tabela__vazia">Nenhum diário encontrado. Os diários aparecem aqui quando um boletim do SUAP é importado{% if pode_cadastrar %} ou quando você cadastra um{% endif %}.</td></tr>
+      <tr><td colspan="7" class="tabela__vazia">Nenhum diário encontrado. Os diários aparecem aqui quando um boletim do SUAP é enviado{% if pode_cadastrar %} ou quando você cadastra um{% endif %}.</td></tr>
       {% endfor %}
     </tbody>
   </table>

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.auditoria",
     "apps.ops",
     "axes",
+    "django_q",
 ]
 
 MIDDLEWARE = [
@@ -153,3 +154,25 @@ ACADEMICO_MATRICULA_REGEX = env("ACADEMICO_MATRICULA_REGEX", default=r"^\d{12}$"
 
 # PDFs enviados ficam numa pasta privada (fora de static/, nunca servida diretamente; fora do Git).
 MEDIA_ROOT = env("DJANGO_MEDIA_ROOT", default=str(BASE_DIR / "media"))
+
+# --- Importação de boletins (E3) ---------------------------------------------------------------
+# Limites do envio (pendentes de confirmação com a TI; ajustáveis no .env).
+IMPORTACAO_TAMANHO_MAXIMO_MB = env.int("IMPORTACAO_TAMANHO_MAXIMO_MB", default=10)
+IMPORTACAO_MAXIMO_PAGINAS = env.int("IMPORTACAO_MAXIMO_PAGINAS", default=20)
+IMPORTACAO_LOTE_MAXIMO_ARQUIVOS = env.int("IMPORTACAO_LOTE_MAXIMO_ARQUIVOS", default=50)
+IMPORTACAO_LOTE_MAXIMO_MB = env.int("IMPORTACAO_LOTE_MAXIMO_MB", default=100)
+# Resolução do OCR (PDF escaneado). 300 dpi é o recomendado pelo Tesseract.
+IMPORTACAO_OCR_DPI = env.int("IMPORTACAO_OCR_DPI", default=300)
+
+# Fila de tarefas (Django-Q2 com o próprio PostgreSQL como fila; sem Redis). Em desenvolvimento, o
+# scripts\dev.ps1 sobe o "qcluster" junto com o servidor. Uma leitura com OCR leva cerca de 20 s.
+Q_CLUSTER = {
+    "name": "suap_v2",
+    "orm": "default",
+    "workers": env.int("FILA_PROCESSOS", default=2),
+    "timeout": 300,  # uma leitura que passe de 5 min é interrompida e marcada como falha
+    "retry": 360,  # precisa ser maior que o timeout
+    "max_attempts": 1,  # a leitura não é repetida sozinha: o professor reenvia, se quiser
+    "catch_up": False,
+    "label": "Fila de tarefas",
+}

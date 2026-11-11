@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load interface static %}
+{% block titulo %}Leitura do boletim{% endblock %}
+{% block scripts %}{% if em_andamento %}<script src="{% static 'js/acompanhar.js' %}" defer></script>{% endif %}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'importacoes:lista' %}">{% icone "arrow-left" %}Envios</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ importacao.nome_arquivo_original|default:"Boletim enviado" }}</h1>
+    <p>Enviado em {{ importacao.criada_em|date:"d/m/Y H:i" }} · até o {{ importacao.bimestre_corte }}º bimestre</p>
+  </div>
+</div>
+<section class="cartao cartao--estreito" aria-live="polite">
+  {% if em_andamento %}
+  <div {% if em_andamento %}data-acompanhar="{% url 'importacoes:situacao' importacao.pk %}"{% endif %} class="situacao-leitura">
+    <span class="carregando" aria-hidden="true"></span>
+    <div>
+      <p><strong data-situacao="{{ importacao.pk }}">{{ importacao.get_status_display }}</strong></p>
+      <p class="nota">Um PDF do SUAP é lido em segundos; um PDF escaneado leva cerca de 20 segundos. Esta página se atualiza sozinha.</p>
+    </div>
+  </div>
+  {% elif importacao.status == "FALHOU" %}
+  <div class="alerta alerta--erro" role="alert">
+    {% icone "circle-alert" %}
+    <div><p><strong>Não foi possível importar este boletim.</strong> {{ relatorio.mensagem }}</p></div>
+  </div>
+  {% include "importacao/_problemas.html" %}
+  <div class="acoes">
+    <a class="botao" href="{% url 'importacoes:enviar' %}">{% icone "upload" %}<span>Enviar outro arquivo</span></a>
+    {% if importacao.enviada_por_id == user.pk or user.eh_admin %}
+    <form method="post" action="{% url 'importacoes:ler_de_novo' importacao.pk %}" data-envio-unico>
+      {% csrf_token %}
+      <button type="submit" class="botao botao--secundario">{% icone "rotate-ccw" %}<span>Ler de novo</span></button>
+    </form>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="alerta alerta--info" role="status">{% icone "info" %}<p>Esta importação foi {{ importacao.get_status_display|lower }}. Nada foi alterado nas notas.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

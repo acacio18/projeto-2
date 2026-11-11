@@ -140,3 +140,16 @@ def exigir_perfil(usuario, *perfis: str) -> None:
 def obter_usuario_visivel(usuario, pk):
     """Busca um usuário dentro do escopo; fora dele, responde 404 (não revela que o registro existe)."""
     return get_object_or_404(usuarios_visiveis(usuario), pk=pk)
+
+
+def importacoes_visiveis(usuario):
+    """Boletins enviados: quem enviou vê os seus; e cada um vê os dos diários que pode ver."""
+    from apps.importacao.models import Importacao  # importação tardia: importacao depende de contas
+
+    if pode_gerenciar_usuarios(usuario):
+        return Importacao.objects.all()
+    if not esta_ativo(usuario):
+        return Importacao.objects.none()
+    return Importacao.objects.filter(
+        Q(enviada_por=usuario) | Q(diario__in=diarios_visiveis(usuario))
+    ).distinct()

@@ -1008,3 +1008,106 @@ table {
     min-width: 9.5rem;
   }
 }
+
+/* ---------- E3: envio e leitura de boletins ---------- */
+.etiqueta--erro {
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
+  border-color: currentColor;
+}
+.carregando {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border: 3px solid var(--cor-borda);
+  border-top-color: var(--cor-marca);
+  border-radius: 50%;
+  animation: girar 900ms linear infinite;
+}
+.carregando--pequeno {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-width: 2px;
+}
+.situacao-leitura {
+  display: flex;
+  gap: var(--espaco-4);
+  align-items: flex-start;
+}
+.situacao-leitura p {
+  margin: 0 0 var(--espaco-1);
+}
+.passos {
+  margin: 0;
+  padding-left: var(--espaco-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-3);
+}
+.lista-problemas {
+  list-style: none;
+  margin: var(--espaco-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+  font-size: var(--texto-14);
+}
+.lista-problemas__item {
+  display: flex;
+  gap: var(--espaco-2);
+  align-items: flex-start;
+}
+.lista-problemas__item--erro .icone {
+  color: var(--cor-erro);
+}
+.lista-problemas__item--aviso .icone {
+  color: var(--cor-aviso);
+}
+.relatorio-leitura {
+  margin: var(--espaco-2) 0 var(--espaco-4);
+}
+.relatorio-leitura .nota {
+  margin-top: 0;
+}
+.bloco-topo {
+  margin-top: var(--espaco-5);
+}
+.campo input[type="file"] {
+  width: 100%;
+  min-height: var(--altura-toque);
+  padding: var(--espaco-2);
+  border: 1px dashed var(--cor-borda-campo);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font: inherit;
+  cursor: pointer;
+}
+.campo input[type="file"]::file-selector-button {
+  margin-right: var(--espaco-3);
+  min-height: 2.25rem;
+  padding: 0 var(--espaco-3);
+  border: 1px solid var(--cor-borda-campo);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-alternativa);
+  color: var(--cor-texto);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cabecalho-pagina--secao {
+  margin-bottom: var(--espaco-3);
+  align-items: center;
+}
+
+/* Entre 1024 e 1279 px a navegação completa cabe sem o nome do usuário e sem os ícones dos itens. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .usuario-atual {
+    display: none;
+  }
+  .navegacao__link .icone {
+    display: none;
+  }
+}

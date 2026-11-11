@@ -1,0 +1,10 @@
+{% load interface %}
+<div class="relatorio-leitura">
+  <p class="nota">
+    {% if relatorio.metodo == "OCR" %}Lido por OCR (PDF escaneado){% if relatorio.confianca %}, confiança média {{ relatorio.confianca|floatformat:0 }}%{% endif %}.
+    <strong>Confira o código do diário e da disciplina e as notas com atenção.</strong>
+    {% elif relatorio.metodo == "TEXTO" %}Lido pelo texto do PDF.{% endif %}
+    {% if relatorio.alunos %}{{ relatorio.alunos }} alunos.{% endif %}
+  </p>
+  {% include "importacao/_problemas.html" %}
+</div>

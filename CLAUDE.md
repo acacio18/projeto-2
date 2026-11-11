@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SUAP V2: sistema web para professores e coordenadores do IFPB (cursos técnicos integrados ao ensino médio). Ele importa o PDF "Boletim de Notas do Diário" exportado pelo SUAP, guarda o histórico, calcula estatísticas e aplica as regras do Regimento Didático. Também mostra alunos em risco, comparações, projeções e recomendações, gera relatórios (PDF/Excel/CSV/JSON) e expõe uma API REST.
 
-A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1 está concluída**: design system aprovado, login, perfis, política de escopo, cadastro de usuários com convite por e-mail, auditoria e telas. A evidência está em `docs/evidencias/E1-infraestrutura-e-acesso.md`. A **E2 está concluída**: cadastros, versões das notas, escopo de diários e telas (evidência em `docs/evidencias/E2-modelo-de-dados-e-cadastros.md`). A próxima é a **E3** (importação de boletins), que depende de autorização. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
+A **Etapa 0 (E0) está concluída** (tarefas 1 a 8): programas instalados, repositório e banco, esqueleto Django com `/healthz`, ferramentas de qualidade com os primeiros testes, scripts PowerShell, fixtures de boletim e CI no GitHub Actions. A **E1 está concluída**: design system aprovado, login, perfis, política de escopo, cadastro de usuários com convite por e-mail, auditoria e telas. A evidência está em `docs/evidencias/E1-infraestrutura-e-acesso.md`. A **E2 está concluída**: cadastros, versões das notas, escopo de diários e telas (evidência em `docs/evidencias/E2-modelo-de-dados-e-cadastros.md`). A **E3 está tecnicamente concluída**: envio, leitor (texto e OCR), validação, fila, lote e telas (evidência em `docs/evidencias/E3-importacao-de-boletins.md`; acurácia em `E3-acuracia-leitor.md`). O aceite de negócio espera ≥ 10 boletins reais (PRC-08). A próxima é a **E4** (motor de regras e estatísticas), que depende de autorização. O planejamento aprovado está em `docs/planejamento/` (comece pelo `README.md`; a matriz dos 32 requisitos fica em `08-matriz-rastreabilidade.md`). As evidências de cada etapa vão em `docs/evidencias/`.
 
 ## Regras de trabalho definidas pelo usuário (obrigatórias)
 
@@ -31,8 +31,8 @@ Scripts de uso diário. O Windows bloqueia `.ps1` por padrão, então chame-os c
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\verificar-ambiente.ps1   # .venv, dependências, .env, PostgreSQL, Chromium, banco e Tesseract
-powershell -ExecutionPolicy Bypass -File scripts\dev.ps1                  # verifica o ambiente e sobe o servidor (e a fila, quando houver)
-powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # ruff, bandit, pytest --cov, pip-audit (-Rapido: sem e2e e sem pip-audit)
+powershell -ExecutionPolicy Bypass -File scripts\dev.ps1                  # verifica o ambiente e sobe o servidor e a fila (qcluster)
+powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # ruff, bandit, pytest --cov, pip-audit (-Rapido: sem e2e, ocr, fila e pip-audit)
 ```
 
 Os `.ps1` precisam ficar em **UTF-8 com BOM**: o PowerShell 5.1 lê arquivos sem BOM como ANSI e corrompe os acentos.
@@ -44,7 +44,7 @@ Comandos avulsos:
 .\.venv\Scripts\pip-compile requirements-dev.in  # após editar dependências de desenvolvimento
 .\.venv\Scripts\pip-sync requirements.txt requirements-dev.txt   # sincroniza o .venv
 .\.venv\Scripts\python -m pytest                 # todos os testes (inclui e2e com Chromium)
-.\.venv\Scripts\python -m pytest -m "not e2e"    # rápido, sem navegador
+.\.venv\Scripts\python -m pytest -m "not e2e and not ocr and not fila"   # rápido: sem navegador, OCR nem qcluster
 .\.venv\Scripts\python -m pytest tests/ops/test_healthz.py::test_rejeita_metodos_diferentes_de_get   # um teste
 .\.venv\Scripts\python -m pytest --cov           # com cobertura
 .\.venv\Scripts\ruff check . ; .\.venv\Scripts\ruff format .
@@ -92,6 +92,13 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
 - **Escopo:** `escopo.diarios_visiveis`, `cursos_visiveis`, `turmas_visiveis`, `disciplinas_visiveis` e `cursos_gerenciaveis`. Fora do escopo responde 404; visível mas sem permissão para alterar, 403.
 - **Parâmetros do Regimento:** `ParametroRegra.vigente(chave, em=data)`. Os valores iniciais estão na migração `notas/0003`.
 - **Testes transacionais:** os testes com `transaction=True` (navegador e migrações) rodam por último e apagam até os dados criados por migração. O `serialized_rollback` não funciona depois do Playwright, então não dependa de `ParametroRegra` nesses testes.
+- **Importação (E3):**
+  - envio por `apps/importacao/envio.py` (`receber_envio`, `reprocessar`); verificação de PDF e ZIP em `arquivos.py`; limites `IMPORTACAO_*` em `config/settings/base.py`;
+  - a leitura roda na fila (`tarefas.processar_importacao`, gancho `ao_terminar`), agendada com `transaction.on_commit`: em testes, use `django_capture_on_commit_callbacks(execute=True)`;
+  - leitor em `apps/importacao/leitura/` (`ler_boletim`: texto pelo pdfplumber, OCR pelo `ocr.py` se não houver texto; regras do layout do SUAP em `perfil_suap.py`). Ao mudar o leitor, suba `VERSAO_LEITOR` e rode `tests/apoio/medir_leitor.py` para atualizar `docs/evidencias/E3-acuracia-leitor.md`;
+  - validação em `validacao.py`: erro impede, aviso só alerta (os valores do boletim são oficiais);
+  - estados `RECEBIDA → PROCESSANDO → AGUARDANDO_CONFIRMACAO | FALHOU`; a confirmação é a da E2.
+- **Fila (Django-Q2):** `Q_CLUSTER` em `base.py`, broker no PostgreSQL. `config.settings.test` usa `sync=True` (a tarefa roda na hora). Marcadores lentos: `ocr` (Tesseract, cerca de 20 s por boletim) e `fila` (`tests/importacao/test_fila_real.py`, que sobe um `qcluster` de verdade no banco de teste).
 - **Demonstração:** `.\.venv\Scripts\python manage.py carregar_exemplo --email <professor>` carrega o boletim de exemplo em 2 versões.
 - **Fábricas de teste:** `tests/apoio/fabricas.py` (`ProfessorFactory`, `CoordenadorFactory`, `AdminFactory`, `CursoFactory`, `TurmaFactory`, `DisciplinaFactory`, `DiarioFactory`; senha padrão `SENHA_PADRAO`).
 - **Boletins de teste:** o gabarito JSON do boletim de exemplo fica em `tests/fixtures/boletins/` (detalhes no `README.md` dessa pasta). As fixtures `boletim_exemplo`, `gabarito_exemplo` e `boletim_digitalizado("300dpi" | "150dpi" | "300dpi_inclinado" | "300dpi_girado90")` estão em `tests/conftest.py`. As versões digitalizadas (só imagem, para OCR) são geradas na hora por `tests/apoio/digitalizacao.py` e não são versionadas. O código de apoio aos testes fica em `tests/apoio/`.
