@@ -95,6 +95,8 @@ def link_para_definir_senha(usuario, request) -> str:
             "token": default_token_generator.make_token(usuario),
         },
     )
+    if settings.ENDERECO_PUBLICO:
+        return settings.ENDERECO_PUBLICO + caminho
     return request.build_absolute_uri(caminho)
 
 

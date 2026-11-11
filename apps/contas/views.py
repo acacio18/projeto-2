@@ -49,6 +49,7 @@ class EsqueciSenhaView(auth_views.PasswordResetView):
     success_url = reverse_lazy("contas:esqueci_senha_enviado")
 
     def form_valid(self, form):
+        self.extra_email_context = {"endereco_publico": settings.ENDERECO_PUBLICO}
         registrar(
             TipoEvento.SENHA_REDEFINICAO_PEDIDA,
             request=self.request,

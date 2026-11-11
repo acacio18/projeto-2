@@ -69,7 +69,8 @@ $env:DJANGO_SETTINGS_MODULE='config.settings.prod'; .\.venv\Scripts\python manag
   - casos de uso do cadastro em `apps/contas/servicos.py`, porque as views só chamam os serviços;
   - auditoria pelo `apps/auditoria/registro.registrar()`; login, logout, falha e bloqueio são gravados por sinais em `apps/auditoria/sinais.py`;
   - bloqueio por tentativas pelo django-axes, por conta e não por IP (justificativa em `config/settings/base.py`);
-  - em testes, use `client.force_login`, porque `client.login` não passa a requisição que o axes exige.
+  - em testes, use `client.force_login`, porque `client.login` não passa a requisição que o axes exige;
+  - e-mail (convites e redefinição): sem configuração, sai no terminal. O SMTP vem do `.env` (`DJANGO_EMAIL_*`; conta Google: `smtp.gmail.com`, 587, TLS) e a senha de app fica só em `%USERPROFILE%\.suap_v2\smtp_senha_de_app.txt` (`DJANGO_EMAIL_SENHA_ARQUIVO`). `DJANGO_ENDERECO_PUBLICO` troca o endereço dos links dos e-mails. Teste com `manage.py sendtestemail <e-mail>`.
 - **Telas:**
   - templates em `templates/` (bases `base.html`, para quem está logado, e `base_acesso.html`, para login e senhas; parciais em `templates/parciais/`, como `campo.html` para campos acessíveis);
   - CSS próprio em `static/css/app.css`, com tokens do design system e temas claro e escuro; JS em `static/js/`, sem código em linha;

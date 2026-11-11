@@ -58,7 +58,7 @@ powershell -ExecutionPolicy Bypass -File scripts\test.ps1                 # lint
 
 Para importar um boletim, entre como professor e use **Importações → Enviar boletins**. O `dev.ps1` sobe junto a fila de tarefas (`manage.py qcluster`), que faz a leitura; sem ela, o envio fica em "Recebida". Para ter dados sem enviar PDF, carregue o boletim de exemplo: `.\.venv\Scripts\python manage.py carregar_exemplo --email <e-mail de um professor>`.
 
-Depois, entre em http://127.0.0.1:8000 e cadastre os professores e coordenadores em **Usuários**. Cada um recebe um convite por e-mail para criar a própria senha. Em desenvolvimento, o e-mail aparece no terminal do `dev.ps1`.
+Depois, entre em http://127.0.0.1:8000 e cadastre os professores e coordenadores em **Usuários**. Cada um recebe um convite por e-mail para criar a própria senha. Sem SMTP configurado, o e-mail só aparece no terminal do `dev.ps1`; para enviar de verdade, veja o bloco de e-mail no `.env.example`.
 
 ## Integração contínua
 

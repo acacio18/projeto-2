@@ -141,10 +141,33 @@ AXES_CLIENT_IP_CALLABLE = "apps.contas.rede.ip_do_cliente"
 # IP com limite próprio está prevista na revisão de segurança da E9.
 SILENCED_SYSTEM_CHECKS = ["axes.W006"]
 
-# E-mail (convites e redefinição de senha). Em desenvolvimento, as mensagens saem no terminal;
-# em produção (E10), SMTP institucional configurado pelo .env.
+# E-mail (convites e redefinição de senha). Sem configuração, as mensagens saem no terminal.
+# Para enviar de verdade, o .env aponta o SMTP; a senha fica num arquivo fora do repositório
+# (%USERPROFILE%\.suap_v2\), nunca no .env nem no código.
 EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
 DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="SUAP V2 <nao-responda@localhost>")
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="localhost")
+EMAIL_PORT = env.int("DJANGO_EMAIL_PORT", default=25)
+EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=False)
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
+EMAIL_TIMEOUT = 20  # segundos: um SMTP fora do ar não trava a tela de cadastro
+
+
+def ler_segredo(variavel: str) -> str:
+    """Conteúdo do arquivo cujo caminho está na variável de ambiente (vazio se não houver)."""
+    valor = env(variavel, default="")
+    caminho = Path(valor).expanduser() if valor else None
+    if caminho is None or not caminho.is_file():
+        return ""  # sem a senha, o envio falha e a tela de cadastro avisa que o convite não saiu
+    # A senha de app do Google aparece em grupos separados por espaço; o SMTP quer sem espaços.
+    return "".join(caminho.read_text(encoding="utf-8").split())
+
+
+EMAIL_HOST_PASSWORD = ler_segredo("DJANGO_EMAIL_SENHA_ARQUIVO")
+
+# Endereço do site usado nos links dos e-mails (ex.: http://192.168.0.10:8000). Vazio: o endereço
+# por onde o administrador acessou. Serve para o link abrir em outro computador.
+ENDERECO_PUBLICO = env("DJANGO_ENDERECO_PUBLICO", default="").rstrip("/")
 
 # Executável do Tesseract OCR (precisa do idioma "por" instalado).
 TESSERACT_CMD = env("TESSERACT_CMD", default=r"C:\Program Files\Tesseract-OCR\tesseract.exe")
