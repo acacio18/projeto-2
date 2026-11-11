@@ -151,6 +151,7 @@ O botão do campo de arquivo ("Choose Files") é o controle nativo do navegador:
 | Testes no navegador (Chromium) | Todos verdes, inclusive envio → conferência → confirmação |
 | `makemigrations --check` | Nenhuma mudança pendente |
 | pip-audit | Nenhuma vulnerabilidade conhecida |
+| CI (commit `050495f`) | [run 42928094146](https://github.com/acacio18/projeto-2/actions/runs/42928094146): success, 465 testes (inclusive OCR e fila real), cobertura 100% |
 
 ## Pendências da E3
 - **Aceite de negócio (PRC-08):** pelo menos 10 boletins reais anonimizados, de turmas e disciplinas diferentes, incluindo reprovados, Avaliação Final, transferidos e pelo menos um escaneado de verdade. A meta de ≥ 98% no OCR foi medida só com o boletim de exemplo.
