@@ -90,7 +90,8 @@ AUTH_USER_MODEL = "contas.Usuario"
 
 # Domínios de e-mail aceitos no cadastro. Pendente de confirmação institucional (o plano cita
 # @ifpb.edu.br e @academico.ifpb.edu.br; o segundo é dos estudantes, que não têm perfil).
-CONTAS_DOMINIOS_EMAIL = env.list("CONTAS_DOMINIOS_EMAIL", default=["ifpb.edu.br"])
+# Confirmado pelo usuário em 11/11/2026 (docs/planejamento/14-decisoes-pendencias.md).
+CONTAS_DOMINIOS_EMAIL = env.list("CONTAS_DOMINIOS_EMAIL", default=["ifpb.edu.br", "academico.ifpb.edu.br"])
 
 AUTHENTICATION_BACKENDS = [
     "axes.backends.AxesStandaloneBackend",  # recusa o login de quem está bloqueado

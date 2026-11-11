@@ -34,7 +34,10 @@ def test_email_e_obrigatorio():
         Usuario.objects.create_user(email="", nome="Sem E-mail")
 
 
-@pytest.mark.parametrize("email", ["prof@ifpb.edu.br", "Prof.Nome@IFPB.EDU.BR"])
+@pytest.mark.parametrize(
+    "email",
+    ["prof@ifpb.edu.br", "Prof.Nome@IFPB.EDU.BR", "aluno@academico.ifpb.edu.br", "x@ACADEMICO.ifpb.edu.br"],
+)
 def test_aceita_email_do_dominio_institucional(email):
     validar_email_institucional(email)
 
@@ -43,7 +46,8 @@ def test_aceita_email_do_dominio_institucional(email):
     "email",
     [
         "prof@gmail.com",
-        "aluno@academico.ifpb.edu.br",  # subdomínio: não aceito sem configuração explícita
+        "aluno@estudante.ifpb.edu.br",  # outro subdomínio: só os configurados valem
+        "aluno@academico.ifpb.edu.br.exemplo.com",
         "prof@ifpb.edu.br.exemplo.com",
         "prof@xifpb.edu.br",
         "sem-arroba",
@@ -57,8 +61,10 @@ def test_recusa_email_fora_do_dominio_institucional(email):
 
 
 def test_dominios_vem_da_configuracao(settings):
-    settings.CONTAS_DOMINIOS_EMAIL = ["ifpb.edu.br", "@academico.ifpb.edu.br"]
-    validar_email_institucional("aluno@academico.ifpb.edu.br")
+    settings.CONTAS_DOMINIOS_EMAIL = ["@ifpb.edu.br"]
+    validar_email_institucional("prof@ifpb.edu.br")
+    with pytest.raises(ValidationError):
+        validar_email_institucional("aluno@academico.ifpb.edu.br")
 
 
 def test_email_e_unico_sem_diferenciar_maiusculas():

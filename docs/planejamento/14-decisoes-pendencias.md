@@ -44,6 +44,11 @@ O usuário pediu que estas quatro pendências fossem resolvidas com base nas inf
 - A âncora normativa mais próxima é o Art. 63: a recuperação bimestral é destinada a quem "não atingiu a média bimestral de 70 (setenta) pontos". Portanto, quem atinge 70 não precisa de recuperação, o que caracteriza rendimento satisfatório no bimestre.
 - **Decisão adotada:** rendimento satisfatório no bimestre = **N da etapa ≥ 70**. Alerta do Art. 64 quando a proporção de alunos **ativos** (excluídos cancelados/transferidos) com N < 70 for **> 30%** (estritamente maior). Selo: "interpretação — validar com a coordenação pedagógica"; limiar parametrizado.
 
+## Domínios de e-mail do cadastro → **CONFIRMADA pelo usuário em 11/11/2026**
+
+- O cadastro aceita `@ifpb.edu.br` e `@academico.ifpb.edu.br`. Outros subdomínios (ex.: `@estudante.ifpb.edu.br`) continuam recusados.
+- A lista fica em `CONTAS_DOMINIOS_EMAIL` (`config/settings/base.py`) e pode ser trocada pelo `.env` sem mudar o código.
+
 ## Fontes consultadas
 - Regimento Didático dos Cursos Técnicos Integrados ao Ensino Médio (IFPB, 2024), PDF fornecido pelo usuário; versão online: https://www.ifpb.edu.br/pro-reitoria/pre/assuntos/regulamentos/regimento-didatico-cursos-tecnicos-integrados-ao-ensino-medio.pdf/@@download/file
 - Regimento Didático Cursos Técnicos Integrados (IFPB, out/2014): https://www.ifpb.edu.br/pre/assuntos/regulamentos/Arquivos/regimento-didatico-dos-cursos-tecnicos-integrados.pdf
