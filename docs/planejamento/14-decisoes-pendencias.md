@@ -53,7 +53,7 @@ O usuário pediu que estas quatro pendências fossem resolvidas com base nas inf
 | Pendência | Decisão |
 |---|---|
 | PRC-01 (arredondamento) | O Regimento não define arredondamento, e o professor pode manter 69 sem arredondar. **O sistema não arredonda:** as contas são exatas (69,5 continua abaixo de 70), e os valores do boletim são os oficiais. O recálculo "meio para o par" continua só para conferir o boletim, e uma diferença gera aviso, sem bloquear. |
-| PRC-02 (MA = 40) | Tem Avaliação Final, desde que a nota mínima seja alcançável. Com MA 40, a AF mínima é 65 (Anexo 01). **Observação:** a meta da AF é a **média final 50** (Art. 91), não 70. O sistema usa 50, como está no Regimento. |
+| PRC-02 (MA = 40) | Tem Avaliação Final, desde que a nota mínima seja alcançável. Com MA 40, a AF mínima é 65 (Anexo 01). **Observação:** a meta da AF é a **média final 50** (Art. 91), não 70. O sistema usa 50, como está no Regimento, e o usuário confirmou: em caso de diferença, vale o Regimento. |
 | PRC-05 (rendimento satisfatório) | Nota da etapa ≥ 70, como proposto. |
 | PRC-06 (faixas) | [0, 40), [40, 70), [70, 86) e [86, 100], como propostas. |
 | PRC-07 (níveis de risco, E5) | Baseados na qualidade da nota. Exemplos dados pelo usuário: 100 ótimo; 80 bom; 70 "mais ou menos"; abaixo de 70 "algo está acontecendo"; 40 "indo mal"; 30 "péssimo". A E5 transforma isso em níveis com limiares parametrizados. |
