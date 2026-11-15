@@ -102,6 +102,7 @@ Capturas em `docs/evidencias/E4-telas/` (6 imagens: diário completo de Matemát
 |---|---|
 | `test.ps1` (ruff, formatação, bandit, pytest com cobertura, pip-audit) | 5 etapas OK; **598 passed, 1 skipped** (a rotina de capturas); cobertura **100%** (3005 linhas, 644 desvios) |
 | `makemigrations --check` | Nenhuma mudança pendente |
+| CI (commit `3b6fcca`, que inclui a E4) | [run 43662082985](https://github.com/acacio18/projeto-2/actions/runs/43662082985): success, 598 testes, cobertura 100% |
 
 ## Próximo passo (aguarda autorização)
 - **E5: learning analytics** (IDs 8, 9, 25 e 26):
