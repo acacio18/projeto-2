@@ -9,7 +9,7 @@ from apps.notas.models import ParametroRegra, TipoParametro
 
 pytestmark = pytest.mark.django_db
 
-PENDENTES = {
+INTERPRETACOES = {
     "MEDIA_MINIMA_AVALIACAO_FINAL",
     "RENDIMENTO_SATISFATORIO_MINIMO",
     "ARREDONDAMENTO_MEDIA",
@@ -38,8 +38,11 @@ def test_valores_iniciais_do_regimento():
     assert all(p.fundamento for p in ParametroRegra.objects.all())
 
 
-def test_interpretacoes_e_pendencias_ficam_marcadas_como_nao_confirmadas():
-    assert set(ParametroRegra.objects.filter(confirmada=False).values_list("chave", flat=True)) == PENDENTES
+def test_interpretacoes_foram_confirmadas_pelo_usuario():
+    """notas/0004: decisões de 14/11/2026 (leitura mais favorável do Regimento, sem esperar validação)."""
+    assert not ParametroRegra.objects.filter(confirmada=False).exists()
+    for chave in INTERPRETACOES:
+        assert "confirmada pelo usuário" in ParametroRegra.vigente(chave).fundamento
 
 
 def test_valem_tambem_para_anos_anteriores():

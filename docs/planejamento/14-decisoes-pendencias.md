@@ -8,6 +8,8 @@ O usuário pediu que estas quatro pendências fossem resolvidas com base nas inf
 
 ## PRC-01 — Arredondamento de médias → **RESOLVIDA por evidência do SUAP (a confirmar com mais boletins)**
 
+> **Atualizada em 14/11/2026:** o sistema não arredonda por conta própria; o item 3 abaixo foi substituído (ver "Decisões do usuário em 14/11/2026").
+
 - **Normas:** nem o Regimento 2024, nem a versão 2014, nem os manuais do estudante encontrados definem o arredondamento das médias escolares. A única regra de arredondamento encontrada em documento do IFPB (Edital 146/2025, processo seletivo) trata de outro assunto e não se aplica.
 - **Evidência empírica (boletim oficial do SUAP, `exemplo_boletins.pdf`, diário 70764):** recalculando MD = (N1+N2+N3+N4)/4 para os 29 alunos ativos:
   - **meio para o par** (*round half to even*): **29/29** acertos;
@@ -43,6 +45,22 @@ O usuário pediu que estas quatro pendências fossem resolvidas com base nas inf
 - O Regimento 2024 (Art. 64) e o de 2014 (artigo equivalente) usam "rendimento satisfatório nas avaliações bimestrais" **sem definir número**. Os regulamentos de Conselho de Classe encontrados (Guarabira; Resolução 153/2017-CS, não acessível) não trouxeram definição nos trechos obtidos.
 - A âncora normativa mais próxima é o Art. 63: a recuperação bimestral é destinada a quem "não atingiu a média bimestral de 70 (setenta) pontos". Portanto, quem atinge 70 não precisa de recuperação, o que caracteriza rendimento satisfatório no bimestre.
 - **Decisão adotada:** rendimento satisfatório no bimestre = **N da etapa ≥ 70**. Alerta do Art. 64 quando a proporção de alunos **ativos** (excluídos cancelados/transferidos) com N < 70 for **> 30%** (estritamente maior). Selo: "interpretação — validar com a coordenação pedagógica"; limiar parametrizado.
+
+## Decisões do usuário em 14/11/2026 (início da E4)
+
+**Regra geral:** nas questões de interpretação do Regimento, vale a leitura mais favorável ao estudante e coerente com o texto, sem esperar validação institucional. Os parâmetros que estavam "pendentes de confirmação" passaram a confirmados (migração `notas/0004`).
+
+| Pendência | Decisão |
+|---|---|
+| PRC-01 (arredondamento) | O Regimento não define arredondamento, e o professor pode manter 69 sem arredondar. **O sistema não arredonda:** as contas são exatas (69,5 continua abaixo de 70), e os valores do boletim são os oficiais. O recálculo "meio para o par" continua só para conferir o boletim, e uma diferença gera aviso, sem bloquear. |
+| PRC-02 (MA = 40) | Tem Avaliação Final, desde que a nota mínima seja alcançável. Com MA 40, a AF mínima é 65 (Anexo 01). **Observação:** a meta da AF é a **média final 50** (Art. 91), não 70. O sistema usa 50, como está no Regimento. |
+| PRC-05 (rendimento satisfatório) | Nota da etapa ≥ 70, como proposto. |
+| PRC-06 (faixas) | [0, 40), [40, 70), [70, 86) e [86, 100], como propostas. |
+| PRC-07 (níveis de risco, E5) | Baseados na qualidade da nota. Exemplos dados pelo usuário: 100 ótimo; 80 bom; 70 "mais ou menos"; abaixo de 70 "algo está acontecendo"; 40 "indo mal"; 30 "péssimo". A E5 transforma isso em níveis com limiares parametrizados. |
+| PRC-08 (boletins reais) | Considerada atendida pelos 28 boletins simulados no modelo do SUAP (`docs/referencias/boletins/simulados/`). Um boletim real do meio do ano ainda ajudaria a confirmar como o SUAP mostra MD e situação antes do 4º bimestre. |
+| PRC-09 (matrícula) | Sempre 12 dígitos: é regra. |
+| PRC-15 (recomendações, E5) | Criadas pelo projeto com base em conhecimento acadêmico atual, sem catálogo institucional. |
+| Índice de recuperação (ID 24) | Como o boletim não traz a nota da recuperação bimestral separada, o índice mede a recuperação entre bimestres (nota < 70 seguida de ≥ 70) e a recuperação na Avaliação Final (MF ≥ 50). Detalhes em `docs/design/formulas-e-indicadores.md`. |
 
 ## Domínios de e-mail do cadastro → **CONFIRMADA pelo usuário em 11/11/2026**
 

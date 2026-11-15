@@ -97,7 +97,8 @@ def test_tabela_de_notas_rola_dentro_do_quadro_no_celular(page, live_server):
     page.set_viewport_size({"width": 375, "height": 800})
     _entrar(page, live_server.url, "prof@ifpb.edu.br")
     page.goto(f"{live_server.url}/diarios/{importacao.diario_id}/")
-    quadro = page.locator(".tabela-rolavel").last
-    medidas = json.loads(quadro.evaluate("q => JSON.stringify([q.scrollWidth, q.clientWidth])"))
-    assert medidas[0] > medidas[1]  # a tabela é mais larga que o quadro, que rola
+    for tabela in [".tabela--notas", ".tabela--estatisticas"]:
+        quadro = page.locator(f".tabela-rolavel:has({tabela})")
+        medidas = json.loads(quadro.evaluate("q => JSON.stringify([q.scrollWidth, q.clientWidth])"))
+        assert medidas[0] > medidas[1], tabela  # a tabela é mais larga que o quadro, que rola
     assert _sem_rolagem_horizontal(page)  # mas a página não

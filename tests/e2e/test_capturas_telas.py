@@ -21,13 +21,24 @@ pytestmark = [
 ]
 
 
-def _foto(page, nome, largura, tema="claro", altura=900):
+def _preparar(page, largura, tema, altura=900):
     page.set_viewport_size({"width": largura, "height": altura})
     # Sem animação: senão a foto pega a transição de 200 ms entre os temas pela metade.
     page.emulate_media(color_scheme="dark" if tema == "escuro" else "light", reduced_motion="reduce")
     page.evaluate("document.documentElement.removeAttribute('data-tema')")
     page.wait_for_timeout(50)
+
+
+def _foto(page, nome, largura, tema="claro", altura=900):
+    _preparar(page, largura, tema, altura)
     page.screenshot(path=str(Path(PASTA) / f"{nome}-{largura}-{tema}.png"), full_page=True)
+
+
+def _foto_da_secao(page, seletor, nome, largura, tema="claro"):
+    _preparar(page, largura, tema)
+    # A foto de um trecho é montada rolando a página: sem isto, o cabeçalho fixo aparece no meio dela.
+    page.add_style_tag(content=".cabecalho, .tabela thead th { position: static !important; }")
+    page.locator(seletor).screenshot(path=str(Path(PASTA) / f"{nome}-{largura}-{tema}.png"))
 
 
 def test_capturas(page, live_server):
@@ -188,3 +199,19 @@ def test_capturas(page, live_server):
     )
     page.goto(f"{base}/importacoes/{lendo.pk}/")
     _foto(page, "24-lendo", 768)
+
+    # --- E4: indicadores do diário ---
+    from tests.apoio import boletins_simulados as simulados
+
+    matematica = simulados.dados_completos(simulados.DISCIPLINAS[3])
+    v_mat = versoes.registrar_versao(por=professora, dados=matematica, bimestre_corte=4, sha256="4" * 64)
+    versoes.confirmar_versao(por=professora, importacao=v_mat)
+    web = simulados.ate_o_bimestre(
+        simulados.dados_completos(simulados.DISCIPLINAS[1]), 2, simulados.NOTAS_FALTANDO
+    )
+    v_web = versoes.registrar_versao(por=professora, dados=web, bimestre_corte=2, sha256="5" * 64)
+    secao = "section[aria-labelledby=titulo-indicadores]"
+    for versao, nome in [(v_mat, "25-indicadores-completo"), (v_web, "26-indicadores-2o-bimestre")]:
+        page.goto(f"{base}/diarios/{versao.diario_id}/")
+        for largura, tema in [(1440, "claro"), (1440, "escuro"), (375, "claro")]:
+            _foto_da_secao(page, secao, nome, largura, tema)

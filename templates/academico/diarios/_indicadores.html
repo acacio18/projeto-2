@@ -1,0 +1,98 @@
+{% load interface %}
+<section class="bloco" aria-labelledby="titulo-indicadores">
+  <div class="cabecalho-pagina">
+    <div>
+      <h2 id="titulo-indicadores">Indicadores {% if selecionada.numero_versao %}da versão {{ selecionada.numero_versao }}{% else %}das notas aguardando confirmação{% endif %}</h2>
+      <p>Calculados com as notas até o {{ indicadores.corte }}º bimestre, sem os alunos cancelados{% if indicadores.tem_fora_das_comparacoes %} e sem os marcados “fora de rankings e comparações”{% endif %}. São estimativas de apoio: o resultado oficial é o do SUAP e o do Conselho de Classe.</p>
+    </div>
+  </div>
+
+  {% if indicadores.alertas_do_conselho %}
+  <div class="alerta alerta--aviso" role="status">
+    {% icone "triangle-alert" %}
+    <div>
+      <p><strong>Alerta para o Conselho de Classe:</strong> mais de 30% da turma ficou abaixo de 70 (Regimento, Art. 64).</p>
+      <ul class="lista-alertas">
+        {% for alerta in indicadores.alertas_do_conselho %}<li>{{ alerta.etapa }}: {{ alerta.abaixo }} aluno{{ alerta.abaixo|pluralize }} ({{ alerta.percentual }}%)</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="grade-indicadores">
+    <section class="cartao" aria-labelledby="titulo-situacoes">
+      <h3 class="cartao__titulo" id="titulo-situacoes">{% icone "users" %}Situação projetada</h3>
+      <ul class="lista-contagem">
+        {% for s in indicadores.situacoes %}
+        <li><span class="etiqueta etiqueta--{{ s.estilo }}">{% icone s.icone %}{{ s.rotulo }}</span><span class="numero forte">{{ s.quantidade }}</span></li>
+        {% endfor %}
+      </ul>
+      <p class="nota">Pelas regras dos Arts. 88 a 92 do Regimento, com {% if indicadores.completo %}a média da disciplina do boletim{% else %}as notas lançadas até agora{% endif %}.</p>
+    </section>
+
+    <section class="cartao" aria-labelledby="titulo-faixas">
+      <h3 class="cartao__titulo" id="titulo-faixas">{% icone "layout-dashboard" %}Faixas de desempenho</h3>
+      <table class="tabela tabela--compacta">
+        <caption class="so-leitor">Alunos por faixa da {{ indicadores.referencia }}</caption>
+        <thead><tr><th scope="col">Faixa</th><th scope="col" class="numero">Alunos</th><th scope="col" class="numero">%</th></tr></thead>
+        <tbody>
+          {% for f in indicadores.faixas %}
+          <tr><th scope="row">{{ f.rotulo }} <span class="nota">{{ f.inicio }} a {% if forloop.last %}{{ f.fim }}{% else %}menos de {{ f.fim }}{% endif %}</span></th><td class="numero">{{ f.quantidade }}</td><td class="numero">{% if f.percentual is None %}–{% else %}{{ f.percentual_formatado }}%{% endif %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p class="nota">Pela {{ indicadores.referencia }}.</p>
+    </section>
+
+    <section class="cartao" aria-labelledby="titulo-recuperacao">
+      <h3 class="cartao__titulo" id="titulo-recuperacao">{% icone "rotate-ccw" %}Recuperação</h3>
+      {% with entre=indicadores.recuperacao_formatada.entre_bimestres af=indicadores.recuperacao_formatada.na_avaliacao_final %}
+      <dl class="detalhes">
+        <dt>Entre bimestres</dt>
+        <dd>{% if entre.casos %}{{ entre.recuperados }} de {{ entre.casos }} ({{ entre.percentual_formatado }}%) chegaram a 70 no bimestre seguinte; ganho médio de {{ entre.ganho }} pontos.{% else %}Ainda não há nota abaixo de 70 seguida de outra etapa.{% endif %}</dd>
+        <dt>Avaliação Final</dt>
+        <dd>{% if af.casos %}{{ af.recuperados }} de {{ af.casos }} ({{ af.percentual_formatado }}%) chegaram à média final 50.{% else %}Ninguém fez a Avaliação Final nesta versão.{% endif %}</dd>
+      </dl>
+      {% endwith %}
+    </section>
+  </div>
+
+  <h3 class="subtitulo">Estatísticas por etapa</h3>
+  <div class="tabela-rolavel">
+    <table class="tabela tabela--estatisticas">
+      <caption class="so-leitor">Indicadores estatísticos das notas de cada etapa{% if indicadores.completo %} e da média da disciplina{% endif %}</caption>
+      <thead><tr><th scope="col">Indicador</th>{% for coluna in indicadores.colunas %}<th scope="col" class="numero">{{ coluna.titulo }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for linha in indicadores.estatisticas %}
+        <tr><th scope="row">{{ linha.rotulo }}</th>{% for valor in linha.valores %}<td class="numero">{{ valor }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="nota">Desvio-padrão populacional (a turma é a população). Quartis pelo mesmo método do QUARTIL.INC do Excel. Notas ausentes ficam fora das contas, sem virar zero.</p>
+
+  <h3 class="subtitulo">Situação de cada estudante</h3>
+  <div class="tabela-rolavel">
+    <table class="tabela tabela--cartoes tabela--situacoes">
+      <caption class="so-leitor">Situação projetada, posição e frequência de cada estudante</caption>
+      <thead><tr><th scope="col" class="numero">#</th><th scope="col">Estudante</th><th scope="col">Situação projetada</th><th scope="col" class="numero">{% if indicadores.completo %}MD{% else %}Média até agora{% endif %}</th><th scope="col" class="numero">Posição</th><th scope="col">Frequência</th></tr></thead>
+      <tbody>
+        {% for aluno in indicadores.alunos %}
+        <tr{% if aluno.cancelado %} class="linha-inativa"{% endif %}>
+          <td class="numero" data-rotulo="#">{{ aluno.ordem }}</td>
+          <td class="tabela__principal">{{ aluno.nome }}{% if aluno.fora_das_comparacoes %} <span class="etiqueta etiqueta--neutra">fora das comparações</span>{% endif %}</td>
+          <td data-rotulo="Situação projetada"><span class="etiqueta etiqueta--{{ aluno.estilo }}">{% icone aluno.icone %}{{ aluno.situacao.rotulo }}</span><span class="motivo">{{ aluno.situacao.motivo }}{% if aluno.situacao.artigos %} ({{ aluno.situacao.artigos|join:", " }}){% endif %}</span></td>
+          <td class="numero" data-rotulo="{% if indicadores.completo %}MD{% else %}Média até agora{% endif %}">{{ aluno.referencia_formatada }}</td>
+          <td class="numero" data-rotulo="Posição">{% if aluno.posicao %}{{ aluno.posicao }}º{% else %}–{% endif %}</td>
+          <td data-rotulo="Frequência">{% if aluno.frequencia %}{% with f=aluno.frequencia %}
+            {% if f.abaixo_do_minimo %}<span class="etiqueta etiqueta--erro">{% icone "circle-alert" %}acima do limite de faltas</span>
+            {% elif f.em_alerta %}<span class="etiqueta etiqueta--aviso">{% icone "triangle-alert" %}{{ f.faltas_restantes }} falta{{ f.faltas_restantes|pluralize }} até o limite</span>
+            {% else %}{{ f.faltas_restantes }} falta{{ f.faltas_restantes|pluralize }} até o limite{% endif %}
+          {% endwith %}{% else %}–{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="nota">Limite de faltas: 25% das {{ indicadores.aulas.previstas }} aulas previstas no diário (Art. 77). A regra de aprovação usa a frequência do ano em todos os componentes (Art. 88); aqui está só este diário. Faltas justificadas não aparecem no boletim. A posição usa ranking denso (empates na mesma posição) e é só para professores e coordenação.</p>
+</section>

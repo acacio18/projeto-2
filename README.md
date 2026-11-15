@@ -20,7 +20,13 @@ Em desenvolvimento. Etapas concluídas:
   - conferência das contas e confirmação pelo professor antes de as notas valerem.
   - O aceite final depende de boletins reais (PRC-08).
 
-Próxima: E4 (regras do Regimento e estatísticas).
+- **E4, regras e estatísticas:**
+  - no diário, os indicadores de cada versão: média, mediana, moda, desvio-padrão, quartis e faixas de desempenho por bimestre;
+  - alerta para o Conselho de Classe e índice de recuperação;
+  - situação projetada de cada aluno pelas regras do Regimento, com motivo e artigo;
+  - faltas que ainda cabem até o limite e posição na turma.
+
+Próxima: E5 (alunos em risco, comparações, projeções e recomendações).
 
 ## Documentação
 
@@ -29,6 +35,7 @@ Próxima: E4 (regras do Regimento e estatísticas).
 - [Análise do boletim SUAP de exemplo](docs/planejamento/15-analise-boletim-exemplo.md); o PDF (nomes fictícios) está em [docs/referencias/boletins/](docs/referencias/boletins/)
 - [Diretrizes de UI/UX](docs/planejamento/16-diretrizes-ui-ux.md) e [design system](docs/design/design-system.md) (cores oficiais do IF, tipografia, componentes)
 - [Modelo de dados](docs/design/modelo-de-dados.md) (diagrama e garantias do banco)
+- [Fórmulas, regras e indicadores](docs/design/formulas-e-indicadores.md) (como cada número é calculado)
 - [Evidências por etapa](docs/evidencias/)
 
 ## Stack prevista

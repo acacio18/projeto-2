@@ -721,7 +721,8 @@ table {
 .tabela tbody tr:hover {
   background: var(--cor-superficie-alternativa);
 }
-.tabela tbody tr:last-child td {
+.tabela tbody tr:last-child td,
+.tabela tbody tr:last-child th {
   border-bottom: 0;
 }
 .tabela .numero {
@@ -1109,5 +1110,91 @@ table {
   }
   .navegacao__link .icone {
     display: none;
+  }
+}
+
+/* ---------- Indicadores do diário (E4) ---------- */
+.grade-indicadores {
+  display: grid;
+  gap: var(--espaco-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  align-items: start;
+  margin-bottom: var(--espaco-5);
+}
+.grade-indicadores > .cartao + .cartao {
+  margin-top: 0;
+}
+.subtitulo {
+  font-size: var(--texto-18);
+  margin: var(--espaco-5) 0 var(--espaco-3);
+}
+.lista-contagem {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-2);
+}
+.lista-contagem li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espaco-3);
+}
+.tabela--compacta th,
+.tabela--compacta td {
+  padding: var(--espaco-2) var(--espaco-2);
+}
+.tabela--compacta tbody th {
+  font-weight: 600;
+}
+.tabela--compacta tbody th .nota {
+  display: block;
+  margin: 0;
+  font-size: var(--texto-12);
+  font-weight: 400;
+}
+.cartao .tabela thead th {
+  position: static; /* tabela curta dentro do cartão: cabeçalho fixo não ajuda e sobrepõe linhas */
+}
+.lista-alertas {
+  margin: var(--espaco-1) 0 0;
+  padding-left: var(--espaco-5);
+}
+.tabela--estatisticas tbody th,
+.tabela--estatisticas td {
+  white-space: nowrap; /* no celular a tabela rola dentro do quadro, sem quebrar os números */
+}
+.tabela--estatisticas tbody th {
+  font-weight: 600;
+}
+/* Nome do indicador fixo à esquerda ao rolar a tabela para os lados (celular). */
+.tabela--estatisticas tbody th,
+.tabela--estatisticas thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--cor-superficie);
+  box-shadow: 1px 0 0 var(--cor-borda);
+}
+.tabela--estatisticas thead th:first-child {
+  z-index: 2;
+  background: var(--cor-superficie-alternativa);
+}
+.tabela--situacoes .motivo {
+  display: block;
+  max-width: 36rem;
+  margin-top: var(--espaco-1);
+  color: var(--cor-texto-secundario);
+  font-size: var(--texto-12);
+}
+@media (max-width: 767px) {
+  .tabela--situacoes td {
+    flex-wrap: wrap;
+  }
+  .tabela--situacoes .motivo {
+    flex-basis: 100%;
+    text-align: left;
   }
 }

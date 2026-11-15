@@ -16,6 +16,8 @@ from django.views.decorators.http import require_http_methods, require_POST
 from apps.academico import servicos
 from apps.academico.formularios import FiltroDiarios, FormularioDiario
 from apps.academico.models import Diario
+from apps.analytics import apresentacao
+from apps.analytics.servicos import indicadores_da_versao
 from apps.contas import escopo
 from apps.importacao import servicos as versoes
 from apps.importacao.models import Importacao, StatusImportacao
@@ -103,6 +105,7 @@ def detalhe(request, pk):
         "pendentes": pendentes,
         "selecionada": selecionada,
         "linhas": consultas.linhas_da_versao(selecionada) if selecionada else [],
+        "indicadores": apresentacao.para_a_tela(indicadores_da_versao(selecionada)) if selecionada else None,
         "pode_cuidar": versoes.pode_cuidar_do_diario(request.user, diario),
         "pode_editar": escopo.pode_gerenciar_curso(request.user, diario.curso),
     }
