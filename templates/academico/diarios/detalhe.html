@@ -55,7 +55,7 @@
     <ul class="lista-versoes">
       {% for versao in confirmadas %}
       <li class="lista-versoes__item{% if versao == selecionada %} lista-versoes__item--atual{% endif %}">
-        <a href="?importacao={{ versao.pk }}"{% if versao == selecionada %} aria-current="true"{% endif %}>Versão {{ versao.numero_versao }}</a>
+        <a href="?importacao={{ versao.pk }}{{ parametro_da_aba }}"{% if versao == selecionada %} aria-current="true"{% endif %}>Versão {{ versao.numero_versao }}</a>
         {% if versao.vigente %}<span class="etiqueta etiqueta--sucesso">{% icone "check" %}vigente</span>{% endif %}
         <span class="nota">confirmada por {{ versao.confirmada_por.nome }} em {{ versao.confirmada_em|date:"d/m/Y H:i" }} · até o {{ versao.bimestre_corte }}º bimestre</span>
       </li>
@@ -68,6 +68,11 @@
 </div>
 
 {% if selecionada %}
+<nav class="abas" id="abas" aria-label="Conteúdo do diário">
+  <a class="abas__aba" href="?importacao={{ selecionada.pk }}#abas"{% if aba == "notas" %} aria-current="page"{% endif %}>{% icone "file-text" %}<span>Notas do boletim</span></a>
+  <a class="abas__aba" href="?importacao={{ selecionada.pk }}&amp;aba=indicadores#abas"{% if aba == "indicadores" %} aria-current="page"{% endif %}>{% icone "layout-dashboard" %}<span>Análise e indicadores</span></a>
+</nav>
+{% if aba == "notas" %}
 <section class="bloco" aria-labelledby="titulo-notas">
   <div class="cabecalho-pagina">
     <div>
@@ -126,6 +131,8 @@
     </table>
   </div>
 </section>
-{% if indicadores %}{% include "academico/diarios/_indicadores.html" %}{% endif %}
+{% else %}
+{% include "academico/diarios/_indicadores.html" %}
+{% endif %}
 {% endif %}
 {% endblock %}

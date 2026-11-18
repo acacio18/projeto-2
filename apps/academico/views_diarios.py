@@ -83,6 +83,9 @@ def lista(request):
     return render(request, "academico/diarios/lista.html", contexto)
 
 
+ABAS = {"notas", "indicadores"}
+
+
 @login_required
 def detalhe(request, pk):
     diario = _diario_visivel(request, pk)
@@ -99,13 +102,19 @@ def detalhe(request, pk):
         selecionada = next((i for i in confirmadas if i.vigente), None) or (
             pendentes[0] if pendentes else None
         )
+    # Abas: as notas do boletim (padrão) e a análise da E4, calculada só quando a aba é aberta.
+    aba = request.GET.get("aba") if request.GET.get("aba") in ABAS else "notas"
     contexto = {
         "diario": diario,
         "confirmadas": confirmadas,
         "pendentes": pendentes,
         "selecionada": selecionada,
-        "linhas": consultas.linhas_da_versao(selecionada) if selecionada else [],
-        "indicadores": apresentacao.para_a_tela(indicadores_da_versao(selecionada)) if selecionada else None,
+        "aba": aba,
+        "parametro_da_aba": "&aba=indicadores" if aba == "indicadores" else "",
+        "linhas": consultas.linhas_da_versao(selecionada) if selecionada and aba == "notas" else [],
+        "indicadores": apresentacao.para_a_tela(indicadores_da_versao(selecionada))
+        if selecionada and aba == "indicadores"
+        else None,
         "pode_cuidar": versoes.pode_cuidar_do_diario(request.user, diario),
         "pode_editar": escopo.pode_gerenciar_curso(request.user, diario.curso),
     }

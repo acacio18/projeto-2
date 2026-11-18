@@ -45,6 +45,13 @@ Autorizada pelo usuário em 14/11/2026 ("pode começar a etapa quatro"), junto c
   - tabela com a situação de cada estudante: rótulo, motivo e artigos, média de referência, posição e faltas até o limite.
 - **Formato e avisos:** números no formato brasileiro (82,75), cada número com a explicação de como foi calculado, e o aviso de que tudo é estimativa.
 
+### Abas no diário (pedido do usuário em 18/11/2026)
+- **Duas abas:** o diário passou a ter **Notas do boletim** (padrão: dados do diário, versões e a tabela de notas) e **Análise e indicadores** (tudo o que a E4 mostra), para não acumular tudo numa página longa.
+- **Como funcionam:** as abas são links (`?aba=indicadores`), que funcionam sem JavaScript, pelo teclado e com leitor de tela (`nav` com `aria-current`). Cada link pula direto para as abas (`#abas`). Ao trocar de versão, a aba aberta continua a mesma.
+- **Desempenho:** os indicadores só são calculados quando a aba deles é aberta.
+- **Celular:** as duas abas dividem a largura.
+- **Testes:** `test_abas_separam_as_notas_da_analise` e `test_abas_do_diario_no_navegador`. Capturas 27 e 28 em `E4-telas/`.
+
 ## Decisões e desvios
 | Assunto | Decisão |
 |---|---|

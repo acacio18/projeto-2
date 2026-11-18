@@ -212,6 +212,13 @@ def test_capturas(page, live_server):
     v_web = versoes.registrar_versao(por=professora, dados=web, bimestre_corte=2, sha256="5" * 64)
     secao = "section[aria-labelledby=titulo-indicadores]"
     for versao, nome in [(v_mat, "25-indicadores-completo"), (v_web, "26-indicadores-2o-bimestre")]:
-        page.goto(f"{base}/diarios/{versao.diario_id}/")
+        page.goto(f"{base}/diarios/{versao.diario_id}/?aba=indicadores")
         for largura, tema in [(1440, "claro"), (1440, "escuro"), (375, "claro")]:
             _foto_da_secao(page, secao, nome, largura, tema)
+
+    # Abas do diário: a tela abre nas notas; a análise fica na outra aba (pulando direto para #abas).
+    for aba, nome in [("", "27-aba-notas"), ("&aba=indicadores", "28-aba-analise")]:
+        for largura, tema in [(1440, "claro"), (375, "escuro")]:
+            _preparar(page, largura, tema)  # largura antes de abrir: o pulo para #abas depende dela
+            page.goto(f"{base}/diarios/{v_mat.diario_id}/?importacao={v_mat.pk}{aba}#abas")
+            page.screenshot(path=str(Path(PASTA) / f"{nome}-{largura}-{tema}.png"))

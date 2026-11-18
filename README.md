@@ -21,7 +21,7 @@ Em desenvolvimento. Etapas concluídas:
   - O aceite final depende de boletins reais (PRC-08).
 
 - **E4, regras e estatísticas:**
-  - no diário, os indicadores de cada versão: média, mediana, moda, desvio-padrão, quartis e faixas de desempenho por bimestre;
+  - no diário, na aba **Análise e indicadores** (separada da aba das notas), os indicadores de cada versão: média, mediana, moda, desvio-padrão, quartis e faixas de desempenho por bimestre;
   - alerta para o Conselho de Classe e índice de recuperação;
   - situação projetada de cada aluno pelas regras do Regimento, com motivo e artigo;
   - faltas que ainda cabem até o limite e posição na turma.

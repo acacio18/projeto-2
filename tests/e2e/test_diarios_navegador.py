@@ -76,6 +76,7 @@ def test_telas_da_e2_sem_rolagem_horizontal(page, live_server, largura):
         "/painel/",
         "/diarios/",
         f"/diarios/{diario.pk}/",
+        f"/diarios/{diario.pk}/?aba=indicadores",
         f"/diarios/{diario.pk}/editar/",
         "/cadastros/",
         "/cadastros/cursos/",
@@ -97,8 +98,28 @@ def test_tabela_de_notas_rola_dentro_do_quadro_no_celular(page, live_server):
     page.set_viewport_size({"width": 375, "height": 800})
     _entrar(page, live_server.url, "prof@ifpb.edu.br")
     page.goto(f"{live_server.url}/diarios/{importacao.diario_id}/")
-    for tabela in [".tabela--notas", ".tabela--estatisticas"]:
+    for aba, tabela in [("", ".tabela--notas"), ("?aba=indicadores", ".tabela--estatisticas")]:
+        page.goto(f"{live_server.url}/diarios/{importacao.diario_id}/{aba}")
         quadro = page.locator(f".tabela-rolavel:has({tabela})")
         medidas = json.loads(quadro.evaluate("q => JSON.stringify([q.scrollWidth, q.clientWidth])"))
         assert medidas[0] > medidas[1], tabela  # a tabela é mais larga que o quadro, que rola
     assert _sem_rolagem_horizontal(page)  # mas a página não
+
+
+def test_abas_do_diario_no_navegador(page, live_server):
+    professor = ProfessorFactory(email="prof@ifpb.edu.br")
+    importacao = versoes.registrar_versao(
+        por=professor, dados=carregar_gabarito(), bimestre_corte=4, sha256="a" * 64
+    )
+    _entrar(page, live_server.url, "prof@ifpb.edu.br")
+    page.goto(f"{live_server.url}/diarios/{importacao.diario_id}/")
+    abas = page.get_by_role("navigation", name="Conteúdo do diário")
+    expect(abas.get_by_role("link", name="Notas do boletim")).to_have_attribute("aria-current", "page")
+    abas.get_by_role("link", name="Análise e indicadores").click()
+    expect(page.get_by_role("heading", name="Estatísticas por etapa")).to_be_visible()
+    expect(page.locator(".tabela--notas")).to_have_count(0)
+    assert (
+        page.evaluate("document.getElementById('abas').getBoundingClientRect().top") < 200
+    )  # rolou até as abas
+    page.get_by_role("link", name="Notas do boletim").click()
+    expect(page.locator(".tabela--notas")).to_be_visible()

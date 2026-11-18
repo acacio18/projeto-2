@@ -16,7 +16,32 @@ def _abrir(client, dados, corte=4):
     professor = ProfessorFactory()
     importacao = versoes.registrar_versao(por=professor, dados=dados, bimestre_corte=corte, sha256="c" * 64)
     client.force_login(professor)
-    return client.get(reverse("diarios:detalhe", args=[importacao.diario_id])).content.decode(), importacao
+    url = reverse("diarios:detalhe", args=[importacao.diario_id]) + "?aba=indicadores"
+    return client.get(url).content.decode(), importacao
+
+
+def test_abas_separam_as_notas_da_analise(client, gabarito_exemplo):
+    professor = ProfessorFactory()
+    importacao = versoes.registrar_versao(
+        por=professor, dados=gabarito_exemplo, bimestre_corte=4, sha256="d" * 64
+    )
+    client.force_login(professor)
+    url = reverse("diarios:detalhe", args=[importacao.diario_id])
+    notas = client.get(url).content.decode()
+    assert '<nav class="abas" id="abas" aria-label="Conteúdo do diário">' in notas
+    assert f'href="?importacao={importacao.pk}#abas" aria-current="page"' in notas
+    assert f'href="?importacao={importacao.pk}&amp;aba=indicadores#abas"' in notas
+    assert "Notas aguardando confirmação" in notas
+    assert "Estatísticas por etapa" not in notas
+    assert not SnapshotIndicadores.objects.exists()  # a análise só é calculada quando a aba é aberta
+    analise = client.get(url + "?aba=indicadores").content.decode()
+    assert f'href="?importacao={importacao.pk}&amp;aba=indicadores#abas" aria-current="page"' in analise
+    assert "Estatísticas por etapa" in analise
+    assert "Notas aguardando confirmação" not in analise
+    assert "tabela--notas" not in analise  # a tabela de notas fica na outra aba
+    assert (
+        "Estatísticas por etapa" not in client.get(url + "?aba=outra").content.decode()
+    )  # aba inválida: notas
 
 
 def test_diario_mostra_os_indicadores_da_versao(client, gabarito_exemplo):
